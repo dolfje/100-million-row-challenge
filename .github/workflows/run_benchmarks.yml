@@ -51,8 +51,8 @@ jobs:
             cd ~/benchmark &&
             git fetch origin &&
             git checkout '$BRANCH' &&
-            git pull --ff-only origin '$BRANCH'
+            git pull origin '$BRANCH'
           "
 
       - name: Run benchmark
-        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ~/benchmark && php85 tempest data:parse"
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ~/benchmark && php8.5 tempest data:parse"
