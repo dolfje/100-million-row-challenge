@@ -8,7 +8,7 @@ use App\Commands\Visit;
 
 final class Parser
 {
-    static $READ_CHUNK = 500_000;
+    static $READ_CHUNK = 1_500_000;
     static $CORES = 8;
 
     public function partParse(string $inputPath, int $start, int $length, $output, $dates) {
