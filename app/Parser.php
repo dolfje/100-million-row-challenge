@@ -61,11 +61,7 @@ final class Parser
                 }
             }
 
-            $left = "";
-            if($pos !== false) {
-                $left = substr($buffer, $pos+1);
-            }
-
+            $left = substr($buffer, $pos+1);
             $read += $lenAsked;
         }
 
