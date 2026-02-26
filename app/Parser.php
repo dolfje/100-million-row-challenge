@@ -174,12 +174,15 @@ final class Parser
 
         $paths = array_unique($paths);
 
-        $merged = [];
-
-        // Merge
+        // Encode
+        $buffer = "{";
+        $pathComma = "";
+        $f = fopen($outputPath, 'wb');
         foreach($paths as $path) {
             $fullPath = "/blog/".$path;
-            $merged[$fullPath] = [];
+            
+            $buffer .= $pathComma."\n".'    "'.str_replace('/', '\\/', $fullPath).'": {';
+            $dateComma = "";
 
             foreach($dates as $date => $dateI) {
                 $count = 0;
@@ -188,12 +191,22 @@ final class Parser
                 }
 
                 if($count != 0) {
-                    $merged[$fullPath]["202".$date] = $count;
+                    $buffer .= $dateComma."\n".'        "202'.$date.'": '.$count;
+                    $dateComma = ",";
                 }
             }
-        }
+            
+            if (strlen($buffer) > 50_000) {
+                fwrite($f, $buffer);
+                $buffer = '';
+            }
 
-        unset($outputs);
-        file_put_contents($outputPath, json_encode($merged, JSON_PRETTY_PRINT));
+            $buffer .= "\n    }";
+            $pathComma = ",";
+        }
+        $buffer .= "\n}";
+
+        fwrite($f, $buffer);
+        fclose($f);
     }
 }
