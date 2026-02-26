@@ -9,7 +9,7 @@ use App\Commands\Visit;
 final class Parser
 {
     static $READ_CHUNK = 500_000;
-    static $CORES = 10;
+    static $CORES = 8;
 
     public function partParse(string $inputPath, int $start, int $length, $output, $dates) {
         $left = "";
@@ -102,7 +102,6 @@ final class Parser
 
     public function parse(string $inputPath, string $outputPath): void
     {
-        ini_set('memory_limit','2048M');
         gc_disable();
 
         // Prepare arrays
