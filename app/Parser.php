@@ -9,7 +9,7 @@ use App\Commands\Visit;
 final class Parser
 {
     static $READ_CHUNK = 500_000;
-    static $CORES = 5;
+    static $CORES = 10;
 
     public function partParse(string $inputPath, int $start, int $length, $output, $dates) {
         $left = "";
@@ -102,6 +102,7 @@ final class Parser
 
     public function parse(string $inputPath, string $outputPath): void
     {
+        ini_set('memory_limit','2048M');
         gc_disable();
 
         // Prepare arrays
@@ -130,16 +131,19 @@ final class Parser
 
         // Start threads
         $length = ceil(filesize($inputPath)/Parser::$CORES);
+        $threads = [];
         for($i=0; $i!=Parser::$CORES; $i++) {
-            $threads[] = $this->partParallel($inputPath, $length*$i, $length, $paths, $dates);
+            $threads[$i] = $this->partParallel($inputPath, $length*$i, $length, $paths, $dates);
         }
+
+        unset($paths);
 
         // Read threads
         $paths = [];
         $outputs = [];
         for($i=0; $i!=Parser::$CORES; $i++) {
             $output = $this->partReadParallel($threads[$i]);
-            $outputs[] = $output[0];
+            $outputs[$i] = $output[0];
 
             $paths = array_merge($paths, $output[1]);
         }
