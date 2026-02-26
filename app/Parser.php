@@ -21,14 +21,12 @@ final class Parser
 
         $order = [];
 
-        while (!$file->eof()) {
-            $buffer = $left . $file->fread(Parser::$READ_CHUNK);
+        while (!$file->eof() && $read != $length) {
+            $lenAsked = $read + Parser::$READ_CHUNK >= $length ? $length - $read : Parser::$READ_CHUNK;
+            $part = $file->fread($lenAsked);
+            $buffer = $left . $part;
 
             $pos = -1;
-            if($read == 0 && !str_starts_with($buffer, "https://")) {
-                $pos = strpos($buffer, "\n");
-            }
-
             $nextPos = strpos($buffer, "\n", $pos+1+30);
             if($start == 0) {
                 while($nextPos !== false) {
@@ -43,10 +41,6 @@ final class Parser
                     
                     $order[$path] = true;
 
-                    if($read + $nextPos > $length) {
-                        return $this->convert($output, $dates, $order);
-                    }
-
                     $pos = $nextPos;
                     $nextPos = strpos($buffer, "\n", $nextPos+1);
                 }
@@ -54,7 +48,7 @@ final class Parser
             else {
                 while($nextPos !== false) {
                     $i = $nextPos - 26;
-                    
+
                     $jump = $pos+26;
                     $path = substr($buffer, $jump, $i-$jump);
                     $date = substr($buffer, $i+4, 7);
@@ -62,10 +56,6 @@ final class Parser
                     $dateId = $dates[$date];
                     $output[$path][$dateId]++;
 
-                    if($read + $nextPos > $length) {
-                        return $this->convert($output, $dates, $order);
-                    }
-                    
                     $pos = $nextPos;
                     $nextPos = strpos($buffer, "\n", $nextPos+1);
                 }
@@ -76,7 +66,7 @@ final class Parser
                 $left = substr($buffer, $pos+1);
             }
 
-            $read += strlen($buffer) - strlen($left);
+            $read += $lenAsked;
         }
 
         return $this->convert($output, $dates, $order);
@@ -151,11 +141,24 @@ final class Parser
             $paths[$uri] = array_fill(0, $dateCount, 0);
         }
 
-        // Start threads
+        // Determine ranges
+        $ranges = [];
+        $start = 0;
+        $file = new SplFileObject($inputPath);
+        $file->setFlags(SplFileObject::READ_AHEAD | SplFileObject::DROP_NEW_LINE | SplFileObject::SKIP_EMPTY);
         $length = ceil(filesize($inputPath)/Parser::$CORES);
+        for($i=0; $i!=Parser::$CORES; $i++) {
+            $file->fseek($length*$i+$length);
+            $file->fgets();
+            $end = $file->ftell();
+            $ranges[$i] = [$start, $end];
+            $start = $end;
+        }
+
+        // Start threads
         $threads = [];
         for($i=0; $i!=Parser::$CORES; $i++) {
-            $threads[$i] = $this->partParallel($inputPath, $length*$i, $length, $paths, $dates);
+            $threads[$i] = $this->partParallel($inputPath, $ranges[$i][0], $ranges[$i][1]-$ranges[$i][0], $paths, $dates);
         }
 
         unset($paths);
@@ -174,15 +177,11 @@ final class Parser
 
         $paths = array_unique($paths);
 
-        // Encode
-        $buffer = "{";
-        $pathComma = "";
-        $f = fopen($outputPath, 'wb');
+        // Merge
+        $merged = [];
         foreach($paths as $path) {
             $fullPath = "/blog/".$path;
-            
-            $buffer .= $pathComma."\n".'    "'.str_replace('/', '\\/', $fullPath).'": {';
-            $dateComma = "";
+            $merged[$fullPath] = [];
 
             foreach($dates as $date => $dateI) {
                 $count = 0;
@@ -191,22 +190,12 @@ final class Parser
                 }
 
                 if($count != 0) {
-                    $buffer .= $dateComma."\n".'        "202'.$date.'": '.$count;
-                    $dateComma = ",";
+                    $merged[$fullPath]["202".$date] = $count;
                 }
             }
-            
-            if (strlen($buffer) > 50_000) {
-                fwrite($f, $buffer);
-                $buffer = '';
-            }
-
-            $buffer .= "\n    }";
-            $pathComma = ",";
         }
-        $buffer .= "\n}";
 
-        fwrite($f, $buffer);
-        fclose($f);
+        unset($outputs);
+        file_put_contents($outputPath, json_encode($merged, JSON_PRETTY_PRINT));
     }
 }
