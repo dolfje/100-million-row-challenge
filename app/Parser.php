@@ -26,11 +26,11 @@ final class Parser
 
         while (!$file->eof()) {
             $buffer = $left . $file->fread(Parser::$READ_CHUNK);
-            $len = strlen($buffer);
 
             $pos = -1;
             if($read == 0 && !str_starts_with($buffer, "https://")) {
                 $pos = strpos($buffer, "\n");
+                $read -= $pos;
             }
 
             $nextPos = strpos($buffer, "\n", $pos+1);
