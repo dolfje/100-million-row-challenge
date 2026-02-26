@@ -19,6 +19,8 @@ final class Parser
         $file->setFlags(SplFileObject::READ_AHEAD | SplFileObject::DROP_NEW_LINE | SplFileObject::SKIP_EMPTY);
         $file->fseek($start);
 
+        $order = [];
+
         while (!$file->eof()) {
             $buffer = $left . $file->fread(Parser::$READ_CHUNK);
 
@@ -36,12 +38,13 @@ final class Parser
 
                 $dateId = $dates[$date];
                 $output[$path][$dateId]++;
+                $order[$path] = true;
 
                 $pos = $nextPos;
                 $nextPos = strpos($buffer, "\n", $nextPos+1);
 
                 if($read + $pos > $length) {
-                    return $this->convert($output, $dates);
+                    return $this->convert($output, $dates, $order);
                 }
             }
 
@@ -53,10 +56,10 @@ final class Parser
             $read += strlen($buffer) - strlen($left);
         }
 
-        return $this->convert($output, $dates);
+        return $this->convert($output, $dates, $order);
     }
 
-    public function convert($input, $dates) {
+    public function convert($input, $dates, $order) {
         $output = [];
         foreach($input as $key => $values) {
             foreach($dates as $date => $i) {
@@ -66,7 +69,7 @@ final class Parser
             }
         }
 
-        return $output;
+        return [$output, array_keys($order)];
     }
 
     public function partParallel(string $inputPath, int $start, int $length, $paths, $dates) {
@@ -132,15 +135,21 @@ final class Parser
         }
 
         // Read threads
+        $paths = [];
         $outputs = [];
         for($i=0; $i!=Parser::$CORES; $i++) {
-            $outputs[] = $this->partReadParallel($threads[$i]);
+            $output = $this->partReadParallel($threads[$i]);
+            $outputs[] = $output[0];
+
+            $paths = array_merge($paths, $output[1]);
         }
+
+        $paths = array_unique($paths);
 
         $merged = [];
 
         // Merge
-        foreach($paths as $path => $_nothing) {
+        foreach($paths as $path) {
             $merged[$path] = [];
 
             foreach($dates as $date => $dateI) {
