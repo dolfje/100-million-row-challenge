@@ -8,7 +8,7 @@ use App\Commands\Visit;
 
 final class Parser
 {
-    static $READ_CHUNK = 1_500_000;
+    static $READ_CHUNK = 500_000;
     static $CORES = 8;
 
     public function partParse(string $inputPath, int $start, int $length, $output, $dates) {
@@ -29,22 +29,45 @@ final class Parser
                 $pos = strpos($buffer, "\n");
             }
 
-            $nextPos = strpos($buffer, "\n", $pos+1);
-            while($nextPos !== false) {
-                $i = strpos($buffer, ",", $pos+1);
+            $nextPos = strpos($buffer, "\n", $pos+1+30);
+            if($start == 0) {
+                while($nextPos !== false) {
+                    $i = $nextPos - 26;
+                    
+                    $jump = $pos+26;
+                    $path = substr($buffer, $jump, $i-$jump);
+                    $date = substr($buffer, $i+4, 7);
 
-                $path = substr($buffer, $pos+20, $i-$pos-20);
-                $date = substr($buffer, $i+1, 10);
+                    $dateId = $dates[$date];
+                    $output[$path][$dateId]++;
+                    
+                    $order[$path] = true;
 
-                $dateId = $dates[$date];
-                $output[$path][$dateId]++;
-                $order[$path] = true;
+                    if($read + $nextPos > $length) {
+                        return $this->convert($output, $dates, $order);
+                    }
 
-                $pos = $nextPos;
-                $nextPos = strpos($buffer, "\n", $nextPos+1);
+                    $pos = $nextPos;
+                    $nextPos = strpos($buffer, "\n", $nextPos+1);
+                }
+            }
+            else {
+                while($nextPos !== false) {
+                    $i = $nextPos - 26;
+                    
+                    $jump = $pos+26;
+                    $path = substr($buffer, $jump, $i-$jump);
+                    $date = substr($buffer, $i+4, 7);
 
-                if($read + $pos > $length) {
-                    return $this->convert($output, $dates, $order);
+                    $dateId = $dates[$date];
+                    $output[$path][$dateId]++;
+
+                    if($read + $nextPos > $length) {
+                        return $this->convert($output, $dates, $order);
+                    }
+                    
+                    $pos = $nextPos;
+                    $nextPos = strpos($buffer, "\n", $nextPos+1);
                 }
             }
 
@@ -107,7 +130,7 @@ final class Parser
         // Prepare arrays
         $dates = [];
         $dateCount = 0;
-        for($y=2020; $y!=2026; $y++) {
+        for($y=0; $y!=6; $y++) {
             for($m=1; $m!=13; $m++) {
                 for($d=1; $d!=32; $d++) {
                     $date = $y."-".str_pad($m, 2, "0", STR_PAD_LEFT)."-".str_pad($d, 2, "0", STR_PAD_LEFT);
@@ -117,14 +140,14 @@ final class Parser
         }
         for($m=1; $m!=3; $m++) {
             for($d=1; $d!=32; $d++) {
-                $date = "2026-".str_pad($m, 2, "0", STR_PAD_LEFT)."-".str_pad($d, 2, "0", STR_PAD_LEFT);
+                $date = "6-".str_pad($m, 2, "0", STR_PAD_LEFT)."-".str_pad($d, 2, "0", STR_PAD_LEFT);
                 $dates[$date] = $dateCount++;
             }
         }
 
         $paths = [];
         foreach(Visit::all() as $page) {
-            $uri = substr($page->uri, 19);
+            $uri = substr($page->uri, 25);
             $paths[$uri] = array_fill(0, $dateCount, 0);
         }
 
@@ -144,7 +167,9 @@ final class Parser
             $output = $this->partReadParallel($threads[$i]);
             $outputs[$i] = $output[0];
 
-            $paths = array_merge($paths, $output[1]);
+            if($i==0) {
+                $paths = $output[1];
+            }
         }
 
         $paths = array_unique($paths);
@@ -153,7 +178,8 @@ final class Parser
 
         // Merge
         foreach($paths as $path) {
-            $merged[$path] = [];
+            $fullPath = "/blog/".$path;
+            $merged[$fullPath] = [];
 
             foreach($dates as $date => $dateI) {
                 $count = 0;
@@ -162,7 +188,7 @@ final class Parser
                 }
 
                 if($count != 0) {
-                    $merged[$path][$date] = $count;
+                    $merged[$fullPath]["202".$date] = $count;
                 }
             }
         }
