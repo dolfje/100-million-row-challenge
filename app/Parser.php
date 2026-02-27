@@ -23,15 +23,13 @@ final class Parser
 
         while (!$file->eof() && $read < $length) {
             $lenAsked = $read + Parser::$READ_CHUNK >= $length ? $length - $read : Parser::$READ_CHUNK;
-            $part = $file->fread($lenAsked);
+            $buffer = $file->fread($lenAsked);
 
-            $extra = "";
-            if(substr($part, -1) != "\n") {
+            if(substr($buffer, -1) != "\n") {
                 $extra = $file->fgets()."\n";
                 $lenAsked += strlen($extra);
-            }            
-
-            $buffer = $part . $extra;
+                $buffer .= $extra;
+            }
 
             $nextPos = -1;
             if($start == 0) {
@@ -96,8 +94,6 @@ final class Parser
         while(!feof($thread[1])) {
             $output .= fread($thread[1], Parser::$READ_CHUNK);
         }
-
-        pcntl_waitpid($thread[0], $status);
 
         $status;
         return [substr($output, 0, $outputLength*2), unpack("v*", substr($output, $outputLength*2))];
@@ -170,8 +166,7 @@ final class Parser
 
         // Merge
         $merged = [];
-        for($j=1; isset($sortedPaths[$j]); $j++) {
-            $pathI = $sortedPaths[$j];
+        foreach($sortedPaths as $pathI) {
             $path = $pathsReverse[$pathI];
             $fullPath = "/blog/".$path;
             $merged[$fullPath] = [];
