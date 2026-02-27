@@ -21,47 +21,46 @@ final class Parser
 
         $order = [];
 
-        while (!$file->eof() && $read != $length) {
+        while (!$file->eof() && $read < $length) {
             $lenAsked = $read + Parser::$READ_CHUNK >= $length ? $length - $read : Parser::$READ_CHUNK;
             $part = $file->fread($lenAsked);
-            $buffer = $left . $part;
 
-            $pos = -1;
-            $nextPos = strpos($buffer, "\n", $pos+1+30);
+            $extra = "";
+            if(substr($part, -1) != "\n") {
+                $extra = $file->fgets()."\n";
+                $lenAsked += strlen($extra);
+            }            
+
+            $buffer = $part . $extra;
+
+            $nextPos = -1;
             if($start == 0) {
-                while($nextPos !== false) {
-                    $i = $nextPos - 26;
+                while($nextPos+1 != $lenAsked) {
+                    $pos = $nextPos;
+                    $nextPos = strpos($buffer, "\n", $nextPos + 52);
                     
-                    $jump = $pos+26;
-                    $path = substr($buffer, $jump, $i-$jump);
-                    $date = substr($buffer, $i+4, 7);
+                    $path = substr($buffer, $pos + 26, $nextPos - $pos - 52);
+                    $date = substr($buffer, $nextPos - 22, 7);
 
                     $dateId = $dates[$date];
                     $output[$path][$dateId]++;
                     
                     $order[$path] = true;
-
-                    $pos = $nextPos;
-                    $nextPos = strpos($buffer, "\n", $nextPos+1);
                 }
             }
             else {
-                while($nextPos !== false) {
-                    $i = $nextPos - 26;
-
-                    $jump = $pos+26;
-                    $path = substr($buffer, $jump, $i-$jump);
-                    $date = substr($buffer, $i+4, 7);
+                while($nextPos+1 != $lenAsked) {
+                    $pos = $nextPos;
+                    $nextPos = strpos($buffer, "\n", $nextPos + 52);
+                    
+                    $path = substr($buffer, $pos + 26, $nextPos - $pos - 52);
+                    $date = substr($buffer, $nextPos - 22, 7);
 
                     $dateId = $dates[$date];
                     $output[$path][$dateId]++;
-
-                    $pos = $nextPos;
-                    $nextPos = strpos($buffer, "\n", $nextPos+1);
                 }
             }
 
-            $left = substr($buffer, $pos+1);
             $read += $lenAsked;
         }
 
