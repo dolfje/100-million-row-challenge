@@ -95,7 +95,6 @@ final class Parser
             $output .= fread($thread[1], Parser::$READ_CHUNK);
         }
 
-        $status;
         return [substr($output, 0, $outputLength*2), unpack("v*", substr($output, $outputLength*2))];
     }
 
@@ -104,29 +103,32 @@ final class Parser
         gc_disable();
 
         // Prepare arrays
+        $m2d = [0, 32, 30, 32, 31, 32, 31, 32, 32, 31, 32, 31, 32];
+        $numbers = ["", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"];
+
         $dates = [];
         $dateCount = 0;
         for($y=0; $y!=6; $y++) {
             for($m=1; $m!=13; $m++) {
-                for($d=1; $d!=32; $d++) {
-                    $date = $y."-".str_pad($m, 2, "0", STR_PAD_LEFT)."-".str_pad($d, 2, "0", STR_PAD_LEFT);
+                $max = $m2d[$m];
+                for($d=1; $d!=$max; $d++) {
+                    $date = $y."-".$numbers[$m]."-".$numbers[$d];
                     $dates[$date] = $dateCount++;
                 }
             }
         }
         for($m=1; $m!=3; $m++) {
-            for($d=1; $d!=32; $d++) {
-                $date = "6-".str_pad($m, 2, "0", STR_PAD_LEFT)."-".str_pad($d, 2, "0", STR_PAD_LEFT);
+            $max = $m2d[$m];
+            for($d=1; $d!=$max; $d++) {
+                $date = "6-".$numbers[$m]."-".$numbers[$d];
                 $dates[$date] = $dateCount++;
             }
         }
 
         $paths = [];
-        $pathsReverse = [];
         $pathCount = 0;
         foreach(Visit::all() as $page) {
             $uri = substr($page->uri, 25);
-            $pathsReverse[$pathCount] = $uri;
             $paths[$uri] = $pathCount++;
         }
 
@@ -152,42 +154,54 @@ final class Parser
             $threads[$i] = $this->partParallel($inputPath, $ranges[$i][0], $ranges[$i][1]-$ranges[$i][0], $output, $dates, $paths, $pathCount);
         }
 
+        // Precompute while waiting
+        $datesJson = [];
+        foreach($dates as $date => $dateI) {
+            $datesJson[$dateI] = "\n        \"202".$date.'": ';
+        }
+
+        $pathsJson = [];
+        foreach($paths as $path => $pathI) {
+            $fullPath = "/blog/".$path;
+            $pathsJson[$pathI] = "\n    \"".str_replace('/', '\\/', $fullPath).'": {';
+        }
+
         // Read threads
         $sortedPaths = [];
-        $outputs = [];
-        for($i=0; $i!=Parser::$CORES; $i++) {
-            $output = $this->partReadParallel($threads[$i], $pathCount*$dateCount);
-            $outputs[$i] = $output[0];
-
-            if($i==0) {
-                $sortedPaths = $output[1];
+        for($i=1; $i!=Parser::$CORES; $i++) {
+            list($data) = $this->partReadParallel($threads[$i], $pathCount*$dateCount);
+            for($j=0; $j!=$pathCount*$dateCount*2; $j+=2) {
+                $first = ord($data[$j]);
+                $second = ord($data[$j+1]);
+                $output[$j/2] += $first + $second*256;
             }
+        }
+        list($data, $sortedPaths) = $this->partReadParallel($threads[0], $pathCount*$dateCount);
+        for($j=0; $j!=$pathCount*$dateCount*2; $j+=2) {
+            $first = ord($data[$j]);
+            $second = ord($data[$j+1]);
+            $output[$j/2] += $first + $second*256;
         }
 
         // Merge
-        $merged = [];
+        $buffer = "{";
+        $pathComma = "";
         foreach($sortedPaths as $pathI) {
-            $path = $pathsReverse[$pathI];
-            $fullPath = "/blog/".$path;
-            $merged[$fullPath] = [];
-
+            $buffer .= $pathComma.$pathsJson[$pathI];
+            $dateComma = "";
             foreach($dates as $date => $dateI) {
-                $count = 0;
-                for($i=0; $i!=Parser::$CORES; $i++) {
-                    $index = $pathI+$dateI*$pathCount;
-                    $first = ord($outputs[$i][$index*2]);
-                    $second = ord($outputs[$i][$index*2+1]);
-
-                    $count += $first + $second*256;
-                }
-
+                $count = $output[$pathI+$dateI*$pathCount];
                 if($count != 0) {
-                    $merged[$fullPath]["202".$date] = $count;
+                    $buffer .= $dateComma.$datesJson[$dateI].$count;
+                    $dateComma = ",";
                 }
             }
-        }
 
-        unset($outputs);
-        file_put_contents($outputPath, json_encode($merged, JSON_PRETTY_PRINT));
+            $buffer .= "\n    }";
+            $pathComma = ",";
+        }
+        $buffer .= "\n}";
+
+        file_put_contents($outputPath, $buffer);
     }
 }
