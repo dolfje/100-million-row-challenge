@@ -35,7 +35,7 @@ final class Parser
 
             $nextPos = -1;
             if($start == 0) {
-                while($nextPos+1 != $lenAsked) {
+                while($nextPos+10 < $lenAsked) {
                     $pos = $nextPos;
                     $nextPos = strpos($buffer, "\n", $nextPos + 52);
                     
@@ -49,7 +49,7 @@ final class Parser
                 }
             }
             else {
-                while($nextPos+1 != $lenAsked) {
+                while($nextPos+10 < $lenAsked) {
                     $pos = $nextPos;
                     $nextPos = strpos($buffer, "\n", $nextPos + 52);
                     
