@@ -109,13 +109,11 @@ final class Parser
 
         // Prepare arrays
         $dates = [];
-        $datesReverse = [];
         $dateCount = 0;
         for($y=0; $y!=6; $y++) {
             for($m=1; $m!=13; $m++) {
                 for($d=1; $d!=32; $d++) {
                     $date = $y."-".str_pad($m, 2, "0", STR_PAD_LEFT)."-".str_pad($d, 2, "0", STR_PAD_LEFT);
-                    $datesReverse[$dateCount] = $date;
                     $dates[$date] = $dateCount++;
                 }
             }
@@ -123,7 +121,6 @@ final class Parser
         for($m=1; $m!=3; $m++) {
             for($d=1; $d!=32; $d++) {
                 $date = "6-".str_pad($m, 2, "0", STR_PAD_LEFT)."-".str_pad($d, 2, "0", STR_PAD_LEFT);
-                $datesReverse[$dateCount] = $date;
                 $dates[$date] = $dateCount++;
             }
         }
@@ -179,7 +176,7 @@ final class Parser
             $fullPath = "/blog/".$path;
             $merged[$fullPath] = [];
 
-            for($dateI=1; $dateI!=$dateCount; $dateI++) {
+            foreach($dates as $date => $dateI) {
                 $count = 0;
                 for($i=0; $i!=Parser::$CORES; $i++) {
                     $index = $pathI+$dateI*$pathCount;
@@ -190,7 +187,6 @@ final class Parser
                 }
 
                 if($count != 0) {
-                    $date = $datesReverse[$dateI];
                     $merged[$fullPath]["202".$date] = $count;
                 }
             }
