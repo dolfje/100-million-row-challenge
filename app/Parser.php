@@ -11,9 +11,16 @@ final class Parser
     static $READ_CHUNK = 500_000;
     static $CORES = 8;
 
-    public function partParse(string $inputPath, int $start, int $length, $output, $dates, $paths, $pathCount) {
+    public function partParse(string $inputPath, int $start, int $length, $dates, $paths, $pathCount, $dateCount) {
         $left = "";
         $read = 0;
+
+        $output = str_repeat(chr(0), $pathCount*$dateCount);
+
+        $next = [];
+        for($i=0; $i!=255;$i++) {
+            $next[chr($i)] = chr($i+1);
+        }
 
         $file = new SplFileObject($inputPath);
         $file->setFlags(SplFileObject::READ_AHEAD | SplFileObject::DROP_NEW_LINE | SplFileObject::SKIP_EMPTY);
@@ -43,7 +50,8 @@ final class Parser
                     $dateId = $dates[$date];
                     $pathId = $paths[$path];
                     
-                    $output[$dateId*$pathCount+$pathId]++;
+                    $index = $dateId*$pathCount+$pathId;
+                    $output[$index] = $next[$output[$index]];
                     
                     $order[$pathId] = true;
                 }
@@ -59,7 +67,8 @@ final class Parser
                     $dateId = $dates[$date];
                     $pathId = $paths[$path];
                     
-                    $output[$dateId*$pathCount+$pathId]++;
+                    $index = $dateId*$pathCount+$pathId;
+                    $output[$index] = $next[$output[$index]];
                 }
             }
 
@@ -70,16 +79,16 @@ final class Parser
     }
 
     public function convert($input, $dates, $order) {
-        return pack("v*", ...$input).pack("v*", ...array_keys($order));
+        return $input.pack("v*", ...array_keys($order));
     }
 
-    public function partParallel(string $inputPath, int $start, int $length, $output, $dates, $paths, $pathCount) {
+    public function partParallel(string $inputPath, int $start, int $length, $dates, $paths, $pathCount, $dateCount) {
         list($readChannel, $writeChannel) = stream_socket_pair(STREAM_PF_UNIX, STREAM_SOCK_STREAM, STREAM_IPPROTO_IP);
         $pid = pcntl_fork();
 
         if ($pid == 0) {
             fclose($readChannel);
-            $output = $this->partParse($inputPath, $start, $length, $output, $dates, $paths, $pathCount);
+            $output = $this->partParse($inputPath, $start, $length, $dates, $paths, $pathCount, $dateCount);
             fwrite($writeChannel, $output);
             exit();
         }
@@ -95,7 +104,7 @@ final class Parser
             $output .= fread($thread[1], Parser::$READ_CHUNK);
         }
 
-        return [substr($output, 0, $outputLength*2), unpack("v*", substr($output, $outputLength*2))];
+        return [substr($output, 0, $outputLength), unpack("v*", substr($output, $outputLength))];
     }
 
     public function parse(string $inputPath, string $outputPath): void
@@ -132,8 +141,6 @@ final class Parser
             $paths[$uri] = $pathCount++;
         }
 
-        $output = array_fill(0, $pathCount*$dateCount, 0);
-
         // Determine ranges
         $ranges = [];
         $start = 0;
@@ -151,7 +158,7 @@ final class Parser
         // Start threads
         $threads = [];
         for($i=0; $i!=Parser::$CORES; $i++) {
-            $threads[$i] = $this->partParallel($inputPath, $ranges[$i][0], $ranges[$i][1]-$ranges[$i][0], $output, $dates, $paths, $pathCount);
+            $threads[$i] = $this->partParallel($inputPath, $ranges[$i][0], $ranges[$i][1]-$ranges[$i][0], $dates, $paths, $pathCount, $dateCount);
         }
 
         // Precompute while waiting
@@ -162,25 +169,22 @@ final class Parser
 
         $pathsJson = [];
         foreach($paths as $path => $pathI) {
-            $fullPath = "/blog/".$path;
-            $pathsJson[$pathI] = "\n    \"".str_replace('/', '\\/', $fullPath).'": {';
+            $pathsJson[$pathI] = "\n    \"".str_replace('/', '\\/', "/blog/".$path).'": {';
         }
 
         // Read threads
+        $output = array_fill(0, $pathCount*$dateCount, 0);
+
         $sortedPaths = [];
         for($i=1; $i!=Parser::$CORES; $i++) {
             list($data) = $this->partReadParallel($threads[$i], $pathCount*$dateCount);
-            for($j=0; $j!=$pathCount*$dateCount*2; $j+=2) {
-                $first = ord($data[$j]);
-                $second = ord($data[$j+1]);
-                $output[$j/2] += $first + $second*256;
+            for($j=0; $j!=$pathCount*$dateCount; $j+=1) {
+                $output[$j] += ord($data[$j]);
             }
         }
         list($data, $sortedPaths) = $this->partReadParallel($threads[0], $pathCount*$dateCount);
-        for($j=0; $j!=$pathCount*$dateCount*2; $j+=2) {
-            $first = ord($data[$j]);
-            $second = ord($data[$j+1]);
-            $output[$j/2] += $first + $second*256;
+        for($j=0; $j!=$pathCount*$dateCount; $j+=1) {
+            $output[$j] += ord($data[$j]);
         }
 
         // Merge
