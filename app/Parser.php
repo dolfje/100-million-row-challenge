@@ -9,7 +9,7 @@ use App\Commands\Visit;
 final class Parser
 {
     static $READ_CHUNK = 500_000;
-    static $CORES = 8;
+    static $CORES = 10;
 
     public function partParse(string $inputPath, int $start, int $length, $dates, $paths, $pathCount, $dateCount) {
         $left = "";
