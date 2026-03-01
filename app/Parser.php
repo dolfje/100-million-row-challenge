@@ -27,7 +27,7 @@ final class Parser
         $file->fseek($start);
 
         $order = [];
-
+        $chunks = 0;
         while (!$file->eof() && $read < $length) {
             $lenAsked = $read + Parser::$READ_CHUNK >= $length ? $length - $read : Parser::$READ_CHUNK;
             $buffer = $file->fread($lenAsked);
@@ -39,7 +39,7 @@ final class Parser
             }
 
             $nextPos = -1;
-            if($start == 0) {
+            if($start == 0 && $chunks++ < 2) {
                 while($nextPos+10 < $lenAsked) {
                     $pos = $nextPos;
                     $nextPos = strpos($buffer, "\n", $nextPos + 52);
@@ -47,10 +47,9 @@ final class Parser
                     $path = substr($buffer, $pos + 26, $nextPos - $pos - 52);
                     $date = substr($buffer, $nextPos - 22, 7);
 
-                    $dateId = $dates[$date];
                     $pathId = $paths[$path];
                     
-                    $index = $dateId*$pathCount+$pathId;
+                    $index = $dates[$date]*$pathCount+$pathId;
                     $output[$index] = $next[$output[$index]];
                     
                     $order[$pathId] = true;
@@ -64,10 +63,7 @@ final class Parser
                     $path = substr($buffer, $pos + 26, $nextPos - $pos - 52);
                     $date = substr($buffer, $nextPos - 22, 7);
 
-                    $dateId = $dates[$date];
-                    $pathId = $paths[$path];
-                    
-                    $index = $dateId*$pathCount+$pathId;
+                    $index = $dates[$date]*$pathCount+$paths[$path];
                     $output[$index] = $next[$output[$index]];
                 }
             }
@@ -94,14 +90,13 @@ final class Parser
         }
 
         fclose($writeChannel);
-        return [$pid, $readChannel];
+        return $readChannel;
     }
 
     public function partReadParallel($thread, $outputLength) {
-        
         $output = "";
-        while(!feof($thread[1])) {
-            $output .= fread($thread[1], Parser::$READ_CHUNK);
+        while(!feof($thread)) {
+            $output .= fread($thread, Parser::$READ_CHUNK);
         }
 
         return [substr($output, 0, $outputLength), unpack("v*", substr($output, $outputLength))];
@@ -172,31 +167,41 @@ final class Parser
             $pathsJson[$pathI] = "\n    \"".str_replace('/', '\\/', "/blog/".$path).'": {';
         }
 
-        // Read threads
         $output = array_fill(0, $pathCount*$dateCount, 0);
 
-        $sortedPaths = [];
-        for($i=1; $i!=Parser::$CORES; $i++) {
-            list($data) = $this->partReadParallel($threads[$i], $pathCount*$dateCount);
-            for($j=0; $j!=$pathCount*$dateCount; $j+=1) {
-                $output[$j] += ord($data[$j]);
+        // Read threads
+        $first = $threads[0];
+        $read = []; $write = []; $except = [];
+        while(count($threads) != 0) {
+            $read = $threads;
+            stream_select($read, $write, $except, 5);
+            foreach($read as $i => $thread) {
+                if($thread == $first) {
+                    list($data, $sortedPaths) = $this->partReadParallel($thread, $pathCount*$dateCount);
+                }
+                else {
+                    list($data) = $this->partReadParallel($thread, $pathCount*$dateCount);
+                }
+
+                for($j=0; $j!=$pathCount*$dateCount; $j+=1) {
+                    $output[$j] += ord($data[$j]);
+                }
+                unset($threads[$i]);
             }
-        }
-        list($data, $sortedPaths) = $this->partReadParallel($threads[0], $pathCount*$dateCount);
-        for($j=0; $j!=$pathCount*$dateCount; $j+=1) {
-            $output[$j] += ord($data[$j]);
         }
 
         // Merge
         $buffer = "{";
         $pathComma = "";
-        foreach($sortedPaths as $pathI) {
+        for($i=1; $i!=$pathCount+1; $i++) {
+            $pathI = $sortedPaths[$i];
             $buffer .= $pathComma.$pathsJson[$pathI];
             $dateComma = "";
-            foreach($dates as $date => $dateI) {
-                $count = $output[$pathI+$dateI*$pathCount];
+            
+            for($j=0; $j!=$dateCount; $j++) {
+                $count = $output[$pathI+$j*$pathCount];
                 if($count != 0) {
-                    $buffer .= $dateComma.$datesJson[$dateI].$count;
+                    $buffer .= $dateComma.$datesJson[$j].$count;
                     $dateComma = ",";
                 }
             }
