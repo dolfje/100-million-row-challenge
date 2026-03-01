@@ -56,10 +56,51 @@ final class Parser
                 }
             }
             else {
+                while($nextPos+10 < $lenAsked-470_000) {
+                    $pos = $nextPos;
+                    $nextPos = strpos($buffer, "\n", $nextPos + 52);
+                    $index = $dates[substr($buffer, $nextPos - 22, 7)]*$pathCount+$paths[substr($buffer, $pos + 30, $nextPos - $pos - 56)];
+                    $output[$index] = $next[$output[$index]];
+
+                    $pos = $nextPos;
+                    $nextPos = strpos($buffer, "\n", $nextPos + 52);
+                    $index = $dates[substr($buffer, $nextPos - 22, 7)]*$pathCount+$paths[substr($buffer, $pos + 30, $nextPos - $pos - 56)];
+                    $output[$index] = $next[$output[$index]];
+
+                    $pos = $nextPos;
+                    $nextPos = strpos($buffer, "\n", $nextPos + 52);
+                    $index = $dates[substr($buffer, $nextPos - 22, 7)]*$pathCount+$paths[substr($buffer, $pos + 30, $nextPos - $pos - 56)];
+                    $output[$index] = $next[$output[$index]];
+
+                    $pos = $nextPos;
+                    $nextPos = strpos($buffer, "\n", $nextPos + 52);
+                    $index = $dates[substr($buffer, $nextPos - 22, 7)]*$pathCount+$paths[substr($buffer, $pos + 30, $nextPos - $pos - 56)];
+                    $output[$index] = $next[$output[$index]];
+
+                    $pos = $nextPos;
+                    $nextPos = strpos($buffer, "\n", $nextPos + 52);
+                    $index = $dates[substr($buffer, $nextPos - 22, 7)]*$pathCount+$paths[substr($buffer, $pos + 30, $nextPos - $pos - 56)];
+                    $output[$index] = $next[$output[$index]];
+
+                    $pos = $nextPos;
+                    $nextPos = strpos($buffer, "\n", $nextPos + 52);
+                    $index = $dates[substr($buffer, $nextPos - 22, 7)]*$pathCount+$paths[substr($buffer, $pos + 30, $nextPos - $pos - 56)];
+                    $output[$index] = $next[$output[$index]];
+
+                    $pos = $nextPos;
+                    $nextPos = strpos($buffer, "\n", $nextPos + 52);
+                    $index = $dates[substr($buffer, $nextPos - 22, 7)]*$pathCount+$paths[substr($buffer, $pos + 30, $nextPos - $pos - 56)];
+                    $output[$index] = $next[$output[$index]];
+
+                    $pos = $nextPos;
+                    $nextPos = strpos($buffer, "\n", $nextPos + 52);
+                    $index = $dates[substr($buffer, $nextPos - 22, 7)]*$pathCount+$paths[substr($buffer, $pos + 30, $nextPos - $pos - 56)];
+                    $output[$index] = $next[$output[$index]];
+                }
+
                 while($nextPos+10 < $lenAsked) {
                     $pos = $nextPos;
                     $nextPos = strpos($buffer, "\n", $nextPos + 52);
-                    
                     $index = $dates[substr($buffer, $nextPos - 22, 7)]*$pathCount+$paths[substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                     $output[$index] = $next[$output[$index]];
                 }
@@ -161,9 +202,9 @@ final class Parser
 
         $pathsJson = [];
         foreach(Visit::all() as $page) {
-            $uri = substr($page->uri, 19);
+            $uri = substr($page->uri, 25);
             $short = substr($page->uri, 29);
-            $pathsJson[$paths[$short]] = "\n    \"".str_replace('/', '\\/', $uri).'": {';
+            $pathsJson[$paths[$short]] = "\n    \"\\/blog\\/".$uri.'": {';
         }
 
         $output = array_fill(0, $pathCount*$dateCount, 0);
