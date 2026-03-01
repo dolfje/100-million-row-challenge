@@ -9,7 +9,7 @@ use App\Commands\Visit;
 final class Parser
 {
     static $READ_CHUNK = 500_000;
-    static $CORES = 10;
+    static $CORES = 8;
 
     public function partParse(string $inputPath, int $start, int $length, $dates, $paths, $pathCount, $dateCount) {
         $left = "";
@@ -44,7 +44,7 @@ final class Parser
                     $pos = $nextPos;
                     $nextPos = strpos($buffer, "\n", $nextPos + 52);
                     
-                    $path = substr($buffer, $pos + 26, $nextPos - $pos - 52);
+                    $path = substr($buffer, $pos + 30, $nextPos - $pos - 56);
                     $date = substr($buffer, $nextPos - 22, 7);
 
                     $pathId = $paths[$path];
@@ -60,10 +60,7 @@ final class Parser
                     $pos = $nextPos;
                     $nextPos = strpos($buffer, "\n", $nextPos + 52);
                     
-                    $path = substr($buffer, $pos + 26, $nextPos - $pos - 52);
-                    $date = substr($buffer, $nextPos - 22, 7);
-
-                    $index = $dates[$date]*$pathCount+$paths[$path];
+                    $index = $dates[substr($buffer, $nextPos - 22, 7)]*$pathCount+$paths[substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                     $output[$index] = $next[$output[$index]];
                 }
             }
@@ -132,7 +129,7 @@ final class Parser
         $paths = [];
         $pathCount = 0;
         foreach(Visit::all() as $page) {
-            $uri = substr($page->uri, 25);
+            $uri = substr($page->uri, 29);
             $paths[$uri] = $pathCount++;
         }
 
@@ -163,8 +160,10 @@ final class Parser
         }
 
         $pathsJson = [];
-        foreach($paths as $path => $pathI) {
-            $pathsJson[$pathI] = "\n    \"".str_replace('/', '\\/', "/blog/".$path).'": {';
+        foreach(Visit::all() as $page) {
+            $uri = substr($page->uri, 19);
+            $short = substr($page->uri, 29);
+            $pathsJson[$paths[$short]] = "\n    \"".str_replace('/', '\\/', $uri).'": {';
         }
 
         $output = array_fill(0, $pathCount*$dateCount, 0);
