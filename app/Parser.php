@@ -41,7 +41,7 @@ final class Parser
             $nextPos = -1;
             $pos = -1;
             if($start == 0 && $chunks++ < 1) {
-                while($nextPos+10 < $lenAsked - 10_000) {
+                while($nextPos+10 < $lenAsked - 5_000) {
                     $pos = \strpos($buffer, "\n", $nextPos + 52);
                     $pathId = $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                     $index = $dates[\substr($buffer, $pos - 22, 7)]*$pathCount+$pathId;
@@ -166,7 +166,7 @@ final class Parser
                 }
             }
             else {
-                while($nextPos+10 < $lenAsked - 10_000) {
+                while($nextPos+10 < $lenAsked - 5_000) {
                     $pos = \strpos($buffer, "\n", $nextPos + 52);
                     $index = $dates[\substr($buffer, $pos - 22, 7)]*$pathCount+$paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                     $output[$index] = $next[$output[$index]];
@@ -395,14 +395,14 @@ final class Parser
         // Precompute while waiting
         $datesJson = [];
         foreach($dates as $date => $dateI) {
-            $datesJson[$dateI] = "\n        \"202".$date.'": ';
+            $datesJson[$dateI*$pathCount] = ",\n        \"202".$date.'": ';
         }
 
         $pathsJson = [];
         foreach(Visit::all() as $page) {
             $uri = \substr($page->uri, 25);
             $short = \substr($page->uri, 29);
-            $pathsJson[$paths[$short]] = "\n    \"\\/blog\\/".$uri.'": {';
+            $pathsJson[$paths[$short]] = ",\n    \"\\/blog\\/".$uri.'": {';
         }
 
         $output = \array_fill(0, $pathCount*$dateCount, 0);
@@ -416,6 +416,7 @@ final class Parser
             foreach($read as $i => $thread) {
                 if($thread == $first) {
                     list($data, $sortedPaths) = $this->partReadParallel($thread, $pathCount*$dateCount);
+                    $pathsJson[$sortedPaths[1]] = substr($pathsJson[$sortedPaths[1]], 1);
                 }
                 else {
                     list($data) = $this->partReadParallel($thread, $pathCount*$dateCount);
@@ -430,22 +431,21 @@ final class Parser
 
         // Merge
         $buffer = "{";
-        $pathComma = "";
-        for($i=1; $i!=$pathCount+1; $i++) {
+        $max = $pathCount+1;
+        for($i=1; $i!=$max; $i++) {
             $pathI = $sortedPaths[$i];
-            $buffer .= $pathComma.$pathsJson[$pathI];
-            $dateComma = "";
+            $buffer .= $pathsJson[$pathI];
+            $first = 0;
             
-            for($j=0; $j!=$dateCount; $j++) {
-                $count = $output[$pathI+$j*$pathCount];
-                if($count != 0) {
-                    $buffer .= $dateComma.$datesJson[$j].$count;
-                    $dateComma = ",";
+            for($j=0; $j!=$dateCount*$pathCount; $j+=$pathCount) {
+                if($output[$pathI+$j] != 0) {
+                    $buffer .= $first++ 
+                        ? $datesJson[$j].$output[$pathI+$j] 
+                        : substr($datesJson[$j].$output[$pathI+$j], 1);
                 }
             }
 
             $buffer .= "\n    }";
-            $pathComma = ",";
         }
         $buffer .= "\n}";
 
