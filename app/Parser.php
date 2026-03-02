@@ -18,7 +18,7 @@ final class Parser
         $output = \str_repeat(\chr(0), $fullCount);
 
         $next = [];
-        for($i=0; $i!=255;$i++) {
+        for($i=0; $i!=100;$i++) {
             $next[\chr($i)] = \chr($i+1);
         }
 
@@ -32,7 +32,7 @@ final class Parser
             $lenAsked = $read + Parser::$READ_CHUNK >= $length ? $length - $read : Parser::$READ_CHUNK;
             $buffer = \fread($file, $lenAsked);
 
-            if(\substr($buffer, -1) != "\n") {
+            if(\substr($buffer, -1) != \PHP_EOL) {
                 $extra = \fgets($file);
                 $lenAsked += \strlen($extra);
                 $buffer .= $extra;
@@ -45,112 +45,112 @@ final class Parser
             $pos = -1;
             if($start == 0 && $chunks++ < 1) {
                 while($nextPos < $lenAskedBatch) {
-                    $pos = \strpos($buffer, "\n", $nextPos + 52);
+                    $pos = \strpos($buffer, \PHP_EOL, $nextPos + 52);
                     $pathId = $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                     $index = $dates[\substr($buffer, $pos - 22, 7)]+$pathId;
                     $output[$index] = $next[$output[$index]];
 
                     $order[$pathId] = true;
 
-                    $nextPos = \strpos($buffer, "\n", $pos + 52);
+                    $nextPos = \strpos($buffer, \PHP_EOL, $pos + 52);
                     $pathId = $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                     $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$pathId;
                     $output[$index] = $next[$output[$index]];
 
                     $order[$pathId] = true;
 
-                    $pos = \strpos($buffer, "\n", $nextPos + 52);
+                    $pos = \strpos($buffer, \PHP_EOL, $nextPos + 52);
                     $pathId = $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                     $index = $dates[\substr($buffer, $pos - 22, 7)]+$pathId;
                     $output[$index] = $next[$output[$index]];
 
                     $order[$pathId] = true;
 
-                    $nextPos = \strpos($buffer, "\n", $pos + 52);
+                    $nextPos = \strpos($buffer, \PHP_EOL, $pos + 52);
                     $pathId = $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                     $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$pathId;
                     $output[$index] = $next[$output[$index]];
 
                     $order[$pathId] = true;
 
-                    $pos = \strpos($buffer, "\n", $nextPos + 52);
+                    $pos = \strpos($buffer, \PHP_EOL, $nextPos + 52);
                     $pathId = $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                     $index = $dates[\substr($buffer, $pos - 22, 7)]+$pathId;
                     $output[$index] = $next[$output[$index]];
 
                     $order[$pathId] = true;
 
-                    $nextPos = \strpos($buffer, "\n", $pos + 52);
+                    $nextPos = \strpos($buffer, \PHP_EOL, $pos + 52);
                     $pathId = $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                     $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$pathId;
                     $output[$index] = $next[$output[$index]];
 
                     $order[$pathId] = true;
 
-                    $pos = \strpos($buffer, "\n", $nextPos + 52);
+                    $pos = \strpos($buffer, \PHP_EOL, $nextPos + 52);
                     $pathId = $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                     $index = $dates[\substr($buffer, $pos - 22, 7)]+$pathId;
                     $output[$index] = $next[$output[$index]];
 
                     $order[$pathId] = true;
 
-                    $nextPos = \strpos($buffer, "\n", $pos + 52);
+                    $nextPos = \strpos($buffer, \PHP_EOL, $pos + 52);
                     $pathId = $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                     $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$pathId;
                     $output[$index] = $next[$output[$index]];
 
                     $order[$pathId] = true;
 
-                    $pos = \strpos($buffer, "\n", $nextPos + 52);
+                    $pos = \strpos($buffer, \PHP_EOL, $nextPos + 52);
                     $pathId = $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                     $index = $dates[\substr($buffer, $pos - 22, 7)]+$pathId;
                     $output[$index] = $next[$output[$index]];
 
                     $order[$pathId] = true;
 
-                    $nextPos = \strpos($buffer, "\n", $pos + 52);
+                    $nextPos = \strpos($buffer, \PHP_EOL, $pos + 52);
                     $pathId = $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                     $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$pathId;
                     $output[$index] = $next[$output[$index]];
 
                     $order[$pathId] = true;
 
-                    $pos = \strpos($buffer, "\n", $nextPos + 52);
+                    $pos = \strpos($buffer, \PHP_EOL, $nextPos + 52);
                     $pathId = $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                     $index = $dates[\substr($buffer, $pos - 22, 7)]+$pathId;
                     $output[$index] = $next[$output[$index]];
 
                     $order[$pathId] = true;
 
-                    $nextPos = \strpos($buffer, "\n", $pos + 52);
+                    $nextPos = \strpos($buffer, \PHP_EOL, $pos + 52);
                     $pathId = $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                     $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$pathId;
                     $output[$index] = $next[$output[$index]];
 
                     $order[$pathId] = true;
 
-                    $pos = \strpos($buffer, "\n", $nextPos + 52);
+                    $pos = \strpos($buffer, \PHP_EOL, $nextPos + 52);
                     $pathId = $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                     $index = $dates[\substr($buffer, $pos - 22, 7)]+$pathId;
                     $output[$index] = $next[$output[$index]];
 
                     $order[$pathId] = true;
 
-                    $nextPos = \strpos($buffer, "\n", $pos + 52);
+                    $nextPos = \strpos($buffer, \PHP_EOL, $pos + 52);
                     $pathId = $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                     $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$pathId;
                     $output[$index] = $next[$output[$index]];
 
                     $order[$pathId] = true;
 
-                    $pos = \strpos($buffer, "\n", $nextPos + 52);
+                    $pos = \strpos($buffer, \PHP_EOL, $nextPos + 52);
                     $pathId = $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                     $index = $dates[\substr($buffer, $pos - 22, 7)]+$pathId;
                     $output[$index] = $next[$output[$index]];
 
                     $order[$pathId] = true;
 
-                    $nextPos = \strpos($buffer, "\n", $pos + 52);
+                    $nextPos = \strpos($buffer, \PHP_EOL, $pos + 52);
                     $pathId = $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                     $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$pathId;
                     $output[$index] = $next[$output[$index]];
@@ -160,7 +160,7 @@ final class Parser
 
                 while($nextPos < $lenAsked) {
                     $pos = $nextPos;
-                    $nextPos = \strpos($buffer, "\n", $nextPos + 52);
+                    $nextPos = \strpos($buffer, \PHP_EOL, $nextPos + 52);
                     $pathId = $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                     $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$pathId;
                     $output[$index] = $next[$output[$index]];
@@ -170,138 +170,138 @@ final class Parser
             }
             else {
                 while($nextPos < $lenAskedBatch) {
-                    $pos = \strpos($buffer, "\n", $nextPos + 52);
+                    $pos = \strpos($buffer, \PHP_EOL, $nextPos + 52);
                     $index = $dates[\substr($buffer, $pos - 22, 7)]+$paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                     $output[$index] = $next[$output[$index]];
 
-                    $nextPos = \strpos($buffer, "\n", $pos + 52);
+                    $nextPos = \strpos($buffer, \PHP_EOL, $pos + 52);
                     $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                     $output[$index] = $next[$output[$index]];
 
-                    $pos = \strpos($buffer, "\n", $nextPos + 52);
+                    $pos = \strpos($buffer, \PHP_EOL, $nextPos + 52);
                     $index = $dates[\substr($buffer, $pos - 22, 7)]+$paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                     $output[$index] = $next[$output[$index]];
 
-                    $nextPos = \strpos($buffer, "\n", $pos + 52);
+                    $nextPos = \strpos($buffer, \PHP_EOL, $pos + 52);
                     $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                     $output[$index] = $next[$output[$index]];
 
-                    $pos = \strpos($buffer, "\n", $nextPos + 52);
+                    $pos = \strpos($buffer, \PHP_EOL, $nextPos + 52);
                     $index = $dates[\substr($buffer, $pos - 22, 7)]+$paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                     $output[$index] = $next[$output[$index]];
 
-                    $nextPos = \strpos($buffer, "\n", $pos + 52);
+                    $nextPos = \strpos($buffer, \PHP_EOL, $pos + 52);
                     $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                     $output[$index] = $next[$output[$index]];
 
-                    $pos = \strpos($buffer, "\n", $nextPos + 52);
+                    $pos = \strpos($buffer, \PHP_EOL, $nextPos + 52);
                     $index = $dates[\substr($buffer, $pos - 22, 7)]+$paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                     $output[$index] = $next[$output[$index]];
 
-                    $nextPos = \strpos($buffer, "\n", $pos + 52);
+                    $nextPos = \strpos($buffer, \PHP_EOL, $pos + 52);
                     $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                     $output[$index] = $next[$output[$index]];
 
-                    $pos = \strpos($buffer, "\n", $nextPos + 52);
+                    $pos = \strpos($buffer, \PHP_EOL, $nextPos + 52);
                     $index = $dates[\substr($buffer, $pos - 22, 7)]+$paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                     $output[$index] = $next[$output[$index]];
 
-                    $nextPos = \strpos($buffer, "\n", $pos + 52);
+                    $nextPos = \strpos($buffer, \PHP_EOL, $pos + 52);
                     $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                     $output[$index] = $next[$output[$index]];
 
-                    $pos = \strpos($buffer, "\n", $nextPos + 52);
+                    $pos = \strpos($buffer, \PHP_EOL, $nextPos + 52);
                     $index = $dates[\substr($buffer, $pos - 22, 7)]+$paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                     $output[$index] = $next[$output[$index]];
 
-                    $nextPos = \strpos($buffer, "\n", $pos + 52);
+                    $nextPos = \strpos($buffer, \PHP_EOL, $pos + 52);
                     $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                     $output[$index] = $next[$output[$index]];
 
-                    $pos = \strpos($buffer, "\n", $nextPos + 52);
+                    $pos = \strpos($buffer, \PHP_EOL, $nextPos + 52);
                     $index = $dates[\substr($buffer, $pos - 22, 7)]+$paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                     $output[$index] = $next[$output[$index]];
 
-                    $nextPos = \strpos($buffer, "\n", $pos + 52);
+                    $nextPos = \strpos($buffer, \PHP_EOL, $pos + 52);
                     $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                     $output[$index] = $next[$output[$index]];
 
-                    $pos = \strpos($buffer, "\n", $nextPos + 52);
+                    $pos = \strpos($buffer, \PHP_EOL, $nextPos + 52);
                     $index = $dates[\substr($buffer, $pos - 22, 7)]+$paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                     $output[$index] = $next[$output[$index]];
 
-                    $nextPos = \strpos($buffer, "\n", $pos + 52);
+                    $nextPos = \strpos($buffer, \PHP_EOL, $pos + 52);
                     $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                     $output[$index] = $next[$output[$index]];
 
-                    $pos = \strpos($buffer, "\n", $nextPos + 52);
+                    $pos = \strpos($buffer, \PHP_EOL, $nextPos + 52);
                     $index = $dates[\substr($buffer, $pos - 22, 7)]+$paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                     $output[$index] = $next[$output[$index]];
 
-                    $nextPos = \strpos($buffer, "\n", $pos + 52);
+                    $nextPos = \strpos($buffer, \PHP_EOL, $pos + 52);
                     $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                     $output[$index] = $next[$output[$index]];
 
-                    $pos = \strpos($buffer, "\n", $nextPos + 52);
+                    $pos = \strpos($buffer, \PHP_EOL, $nextPos + 52);
                     $index = $dates[\substr($buffer, $pos - 22, 7)]+$paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                     $output[$index] = $next[$output[$index]];
 
-                    $nextPos = \strpos($buffer, "\n", $pos + 52);
+                    $nextPos = \strpos($buffer, \PHP_EOL, $pos + 52);
                     $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                     $output[$index] = $next[$output[$index]];
 
-                    $pos = \strpos($buffer, "\n", $nextPos + 52);
+                    $pos = \strpos($buffer, \PHP_EOL, $nextPos + 52);
                     $index = $dates[\substr($buffer, $pos - 22, 7)]+$paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                     $output[$index] = $next[$output[$index]];
 
-                    $nextPos = \strpos($buffer, "\n", $pos + 52);
+                    $nextPos = \strpos($buffer, \PHP_EOL, $pos + 52);
                     $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                     $output[$index] = $next[$output[$index]];
 
-                    $pos = \strpos($buffer, "\n", $nextPos + 52);
+                    $pos = \strpos($buffer, \PHP_EOL, $nextPos + 52);
                     $index = $dates[\substr($buffer, $pos - 22, 7)]+$paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                     $output[$index] = $next[$output[$index]];
 
-                    $nextPos = \strpos($buffer, "\n", $pos + 52);
+                    $nextPos = \strpos($buffer, \PHP_EOL, $pos + 52);
                     $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                     $output[$index] = $next[$output[$index]];
 
-                    $pos = \strpos($buffer, "\n", $nextPos + 52);
+                    $pos = \strpos($buffer, \PHP_EOL, $nextPos + 52);
                     $index = $dates[\substr($buffer, $pos - 22, 7)]+$paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                     $output[$index] = $next[$output[$index]];
 
-                    $nextPos = \strpos($buffer, "\n", $pos + 52);
+                    $nextPos = \strpos($buffer, \PHP_EOL, $pos + 52);
                     $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                     $output[$index] = $next[$output[$index]];
 
-                    $pos = \strpos($buffer, "\n", $nextPos + 52);
+                    $pos = \strpos($buffer, \PHP_EOL, $nextPos + 52);
                     $index = $dates[\substr($buffer, $pos - 22, 7)]+$paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                     $output[$index] = $next[$output[$index]];
 
-                    $nextPos = \strpos($buffer, "\n", $pos + 52);
+                    $nextPos = \strpos($buffer, \PHP_EOL, $pos + 52);
                     $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                     $output[$index] = $next[$output[$index]];
 
-                    $pos = \strpos($buffer, "\n", $nextPos + 52);
+                    $pos = \strpos($buffer, \PHP_EOL, $nextPos + 52);
                     $index = $dates[\substr($buffer, $pos - 22, 7)]+$paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                     $output[$index] = $next[$output[$index]];
 
-                    $nextPos = \strpos($buffer, "\n", $pos + 52);
+                    $nextPos = \strpos($buffer, \PHP_EOL, $pos + 52);
                     $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                     $output[$index] = $next[$output[$index]];
 
-                    $pos = \strpos($buffer, "\n", $nextPos + 52);
+                    $pos = \strpos($buffer, \PHP_EOL, $nextPos + 52);
                     $index = $dates[\substr($buffer, $pos - 22, 7)]+$paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                     $output[$index] = $next[$output[$index]];
 
-                    $nextPos = \strpos($buffer, "\n", $pos + 52);
+                    $nextPos = \strpos($buffer, \PHP_EOL, $pos + 52);
                     $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                     $output[$index] = $next[$output[$index]];
                 }
 
                 while($nextPos < $lenAsked) {
                     $pos = $nextPos;
-                    $nextPos = \strpos($buffer, "\n", $nextPos + 52);
+                    $nextPos = \strpos($buffer, \PHP_EOL, $nextPos + 52);
                     $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                     $output[$index] = $next[$output[$index]];
                 }
@@ -382,6 +382,7 @@ final class Parser
         $ranges = [];
         $start = 0;
         $file = \fopen($inputPath, "r");
+        \stream_set_read_buffer($file, 0);
         $length = \ceil(\filesize($inputPath)/Parser::$CORES);
         for($i=0; $i!=Parser::$CORES; $i++) {
             \fseek($file, $length*$i+$length);
