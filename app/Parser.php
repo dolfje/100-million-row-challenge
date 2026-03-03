@@ -27,7 +27,7 @@ final class Parser
         \fseek($file, $start);
 
         $order = [];
-        $chunks = 0;
+        $first = true;
         while (!\feof($file) && $read < $length) {
             $lenAsked = $read + Parser::$READ_CHUNK >= $length ? $length - $read : Parser::$READ_CHUNK;
             $buffer = \fread($file, $lenAsked);
@@ -43,7 +43,8 @@ final class Parser
 
             $nextPos = -1;
             $pos = -1;
-            if($start == 0 && $chunks++ < 1) {
+            if($start == 0 && $first) {
+                $first = false;
                 while($nextPos < $lenAskedBatch) {
                     $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
                     $pathId = $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
@@ -322,14 +323,13 @@ final class Parser
         $pid = \pcntl_fork();
 
         if ($pid == 0) {
-            \fclose($readChannel);
             $output = Parser::partParse($inputPath, $start, $length, $dates, $paths, $fullCount);
             \fwrite($writeChannel, $output);
             \fflush($writeChannel);
+            \fclose($writeChannel);
             exit();
         }
 
-        \fclose($writeChannel);
         return $readChannel;
     }
 
@@ -352,7 +352,7 @@ final class Parser
         return \unpack("C*", implode("", $output));
     }
 
-    public function parse(string $inputPath, string $outputPath): void
+    static public function parse(string $inputPath, string $outputPath): void
     {
         \gc_disable();
 
@@ -362,6 +362,7 @@ final class Parser
 
         $paths = [];
         $pathCount = 0;
+        include __DIR__."/Commands/Visit.php";
         foreach(Visit::all() as $page) {
             $uri = \substr($page->uri, 29);
             $paths[$uri] = $pathCount++;
@@ -435,7 +436,7 @@ final class Parser
             foreach($read as $i => $thread) {
                 if($thread == $first) {
                     list($data, $sortedPaths) = Parser::partReadParallelFirst($thread, $fullCount);
-                    $pathsJson[$sortedPaths[1]] = substr($pathsJson[$sortedPaths[1]], 7);
+                    $pathsJson[$sortedPaths[1]] = \substr($pathsJson[$sortedPaths[1]], 7);
                 }
                 else {
                     $data = Parser::partReadParallel($thread, $fullCount);
