@@ -365,8 +365,6 @@ final class Parser
 
     static public function parse(string $inputPath, string $outputPath): void
     {
-PARSER::$start = microtime(true);
-
         \gc_disable();
 
         // Prepare arrays
