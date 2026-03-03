@@ -9,7 +9,7 @@ use App\Commands\Visit;
 final class Parser
 {
     static $READ_CHUNK = 500_000;
-    static $CORES = 14;
+    static $CORES = 7;
 
     static public function partParse(string $inputPath, int $start, int $length, $dates, $paths, $fullCount) {
         $left = "";
@@ -18,7 +18,7 @@ final class Parser
         $output = \str_repeat(\chr(0), $fullCount);
 
         $next = [];
-        for($i=0; $i!=100;$i++) {
+        for($i=0; $i!=150;$i++) {
             $next[\chr($i)] = \chr($i+1);
         }
 
