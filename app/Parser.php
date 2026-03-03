@@ -9,7 +9,7 @@ use App\Commands\Visit;
 final class Parser
 {
     static $READ_CHUNK = 500_000;
-    static $CORES = 7;
+    static $CORES = 8;
 
     static public function partParse(string $inputPath, int $start, int $length, $dates, $paths, $fullCount) {
         $left = "";
@@ -18,7 +18,7 @@ final class Parser
         $output = \str_repeat(\chr(0), $fullCount);
 
         $next = [];
-        for($i=0; $i!=150;$i++) {
+        for($i=0; $i!=100;$i++) {
             $next[\chr($i)] = \chr($i+1);
         }
 
@@ -339,7 +339,7 @@ final class Parser
             $output .= \fread($thread, Parser::$READ_CHUNK);
         }
 
-        return [\substr($output, 0, $fullCount), \unpack("v*", \substr($output, $fullCount))];
+        return [\unpack("C*", \substr($output, 0, $fullCount)), \unpack("v*", \substr($output, $fullCount))];
     }
 
     public function parse(string $inputPath, string $outputPath): void
@@ -430,8 +430,8 @@ final class Parser
                     list($data) = Parser::partReadParallel($thread, $fullCount);
                 }
 
-                for($j=0; $j!=$fullCount; $j+=1) {
-                    $output[$j] += \ord($data[$j]);
+                for($j=0; $j!=$fullCount; $j++) {
+                    $output[$j] += $data[$j+1];
                 }
                 unset($threads[$i]);
             }
