@@ -406,22 +406,6 @@ final class Parser
         exit();
     }
 
-    static public function partReadParallelFirst($thread, $fullCount) { 
-        $output = "";
-        while(!\feof($thread)) {
-            $output .= \fread($thread, Parser::$READ_CHUNK);
-        }
-        return [\unpack('C*', \substr($output, 0, $fullCount)), \unpack("v*", \substr($output, $fullCount))];
-    }
-
-    static public function partReadParallel($thread, $fullCount) {
-        $output = "";
-        while(!\feof($thread)) {
-            $output .= \fread($thread, Parser::$READ_CHUNK);
-        }
-        return \unpack('C*', $output);
-    }
-
     static public function parse(string $inputPath, string $outputPath): void
     {
         \gc_disable();
@@ -770,23 +754,34 @@ final class Parser
         $output = \array_fill(0, $fullCount, 0);
 
         // Read threads
-        $read = []; $write = []; $except = [];
+        $read = []; $write = []; $except = []; $outputs = ["","","","","","","",""];
         while(\count($threads) != 0) {
             $read = $threads;
             \stream_select($read, $write, $except, 5);
             foreach($read as $i => $thread) {
-                if($i == 0) {
-                    list($data, $sortedPaths) = Parser::partReadParallelFirst($thread, $fullCount);
-                    $pathsJson[$sortedPaths[1]] = \substr($pathsJson[$sortedPaths[1]], 7);
-                }
-                else {
-                    $data = Parser::partReadParallel($thread, $fullCount);
+                $outputs[$i] .= \fread($thread, Parser::$READ_CHUNK);
+
+                if(\feof($thread) && $outputs[$i] != "") {
+                    if($i == 0) {
+                        $data = \unpack('C*', \substr($outputs[$i], 0, $fullCount));
+                        for($j=0; $j!=$fullCount; $j++) {
+                            $output[$j] += $data[$j+1];
+                        }
+                        $sortedPaths = \unpack("v*", \substr($outputs[$i], $fullCount));
+                        $pathsJson[$sortedPaths[1]] = \substr($pathsJson[$sortedPaths[1]], 7);
+                        unset($outputs[$i]);
+                    }
+                    else {
+                        $data = \unpack('C*', $outputs[$i]);
+                        for($j=0; $j!=$fullCount; $j++) {
+                            $output[$j] += $data[$j+1];
+                        }
+                        unset($outputs[$i]);
+                    }
+                    unset($threads[$i]);
                 }
 
-                for($j=0; $j!=$fullCount; $j++) {
-                    $output[$j] += $data[$j+1];
-                }
-                unset($threads[$i]);
+
             }
         }
 
