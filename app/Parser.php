@@ -3,7 +3,7 @@
 final class Parser
 {
     static $FIRST_READ_CHUNK = 165_000;
-    static $READ_CHUNK = 500_000;
+    static $READ_CHUNK = 165_000;
     static $CORES = 9;
 
     static public function partParse(string $inputPath, int $start, int $length, $dates, $paths, $fullCount) {
@@ -35,67 +35,11 @@ final class Parser
             }
 
             $lenAsked -= 10;
-            $lenAskedBatch = $lenAsked - 3000;
+            $lenAskedBatch = $lenAsked - 1900;
 
             $nextPos = -1;
             $pos = -1;
             while($nextPos < $lenAskedBatch) {
-                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
-                $pathId = $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
-                $index = $dates[\substr($buffer, $pos - 22, 7)]+$pathId;
-                $output[$index] = $next[$output[$index]];
-
-                $order[$pathId] = true;
-
-                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
-                $pathId = $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
-                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$pathId;
-                $output[$index] = $next[$output[$index]];
-
-                $order[$pathId] = true;
-
-                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
-                $pathId = $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
-                $index = $dates[\substr($buffer, $pos - 22, 7)]+$pathId;
-                $output[$index] = $next[$output[$index]];
-
-                $order[$pathId] = true;
-
-                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
-                $pathId = $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
-                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$pathId;
-                $output[$index] = $next[$output[$index]];
-
-                $order[$pathId] = true;
-
-                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
-                $pathId = $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
-                $index = $dates[\substr($buffer, $pos - 22, 7)]+$pathId;
-                $output[$index] = $next[$output[$index]];
-
-                $order[$pathId] = true;
-
-                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
-                $pathId = $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
-                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$pathId;
-                $output[$index] = $next[$output[$index]];
-
-                $order[$pathId] = true;
-
-                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
-                $pathId = $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
-                $index = $dates[\substr($buffer, $pos - 22, 7)]+$pathId;
-                $output[$index] = $next[$output[$index]];
-
-                $order[$pathId] = true;
-
-                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
-                $pathId = $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
-                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$pathId;
-                $output[$index] = $next[$output[$index]];
-
-                $order[$pathId] = true;
-
                 $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
                 $pathId = $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                 $index = $dates[\substr($buffer, $pos - 22, 7)]+$pathId;
@@ -179,43 +123,11 @@ final class Parser
             }
 
             $lenAsked -= 10;
-            $lenAskedBatch = $lenAsked - 3000;
+            $lenAskedBatch = $lenAsked - 1900;
 
             $nextPos = -1;
             $pos = -1;
             while($nextPos < $lenAskedBatch) {
-                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
-                $index = $dates[\substr($buffer, $pos - 22, 7)]+$paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
-                $output[$index] = $next[$output[$index]];
-
-                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
-                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
-                $output[$index] = $next[$output[$index]];
-
-                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
-                $index = $dates[\substr($buffer, $pos - 22, 7)]+$paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
-                $output[$index] = $next[$output[$index]];
-
-                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
-                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
-                $output[$index] = $next[$output[$index]];
-
-                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
-                $index = $dates[\substr($buffer, $pos - 22, 7)]+$paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
-                $output[$index] = $next[$output[$index]];
-
-                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
-                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
-                $output[$index] = $next[$output[$index]];
-
-                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
-                $index = $dates[\substr($buffer, $pos - 22, 7)]+$paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
-                $output[$index] = $next[$output[$index]];
-
-                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
-                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
-                $output[$index] = $next[$output[$index]];
-
                 $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
                 $index = $dates[\substr($buffer, $pos - 22, 7)]+$paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                 $output[$index] = $next[$output[$index]];
@@ -764,29 +676,31 @@ final class Parser
         $output = \array_fill(0, $fullCount, 0);
 
         // Read threads
-        $read = []; $write = []; $except = []; $outputs = ["","","","","","","","",""];
+        $read = []; $write = []; $except = []; $outputs = [0,0,0,0,0,0,0,0,0]; $output0 = "";
         while(\count($threads) != 0) {
             $read = $threads;
             \stream_select($read, $write, $except, 5);
             foreach($read as $i => $thread) {
-                $outputs[$i] .= \fread($thread, Parser::$READ_CHUNK);
-
-                if(\feof($thread) && $outputs[$i] != "") {
-                    if($i == 0) {
-                        $data = \unpack('C*', \substr($outputs[$i], 0, $fullCount));
-                        for($j=0; $j!=$fullCount; $j++) {
-                            $output[$j] += $data[$j+1];
-                        }
-                        $sortedPaths = \unpack("v*", \substr($outputs[$i], $fullCount));
-                        $pathsJson[$sortedPaths[1]] = \substr($pathsJson[$sortedPaths[1]], 7);
-                        unset($outputs[$i]);
+                if($i == 0) {
+                    $output0 .= \fread($thread, Parser::$READ_CHUNK);
+                }
+                else {
+                    $j = $outputs[$i];
+                    foreach(\unpack('C*', \fread($thread, Parser::$READ_CHUNK)) as $data) {
+                        $output[$j++] += $data;
                     }
-                    else {
-                        $data = \unpack('C*', $outputs[$i]);
+                    $outputs[$i] = $j;
+                }
+
+                if(\feof($thread)) {
+                    if($i == 0) {
+                        $data = \unpack('C*', \substr($output0, 0, $fullCount));
                         for($j=0; $j!=$fullCount; $j++) {
                             $output[$j] += $data[$j+1];
                         }
-                        unset($outputs[$i]);
+                        $sortedPaths = \unpack("v*", \substr($output0, $fullCount));
+                        $pathsJson[$sortedPaths[1]] = \substr($pathsJson[$sortedPaths[1]], 7);
+                        unset($output0);
                     }
                     unset($threads[$i]);
                 }
