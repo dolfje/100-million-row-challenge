@@ -245,7 +245,6 @@ final class Parser
             fclose($streams[5][1]);
             fclose($streams[6][1]);
             fclose($streams[7][1]);                
-            fclose($streams[8][1]);
             $pid = \pcntl_fork(); // 0.4
             if ($pid == 0) {
                 fclose($streams[2][1]);
@@ -281,7 +280,6 @@ final class Parser
         if ($pid == 0) {
             fclose($streams[6][1]);
             fclose($streams[7][1]);
-            fclose($streams[8][1]);
             $pid = \pcntl_fork(); // 0.6
             if ($pid == 0) {
                 fclose($streams[5][1]);
@@ -297,7 +295,6 @@ final class Parser
         fclose($streams[5][1]);
         $pid = \pcntl_fork(); // 0.6
         if ($pid == 0) {
-            fclose($streams[8][1]);
             $pid = \pcntl_fork(); // 0.8
             if ($pid == 0) {
                 fclose($streams[7][1]);
@@ -311,13 +308,13 @@ final class Parser
 
         fclose($streams[6][1]);  
         fclose($streams[7][1]);
-        $pid = \pcntl_fork(); // 0.8
-        if ($pid == 0) {
-            Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 8, $next);
-            exit();
-        }
 
-        fclose($streams[8][1]);
+        $output = \array_fill(0, $fullCount, 0);
+        $j = 0;
+        foreach(\unpack('C*', Parser::partParse($inputPath, $ranges[8][0], $ranges[8][1]-$ranges[8][0], $dates, $paths, $fullCount, $next)) as $data) {
+            $output[$j++] += $data;
+        }
+        return $output;
     }
 
     static public function partParallelGo(string $inputPath, $dates, $paths, $fullCount, $ranges, $streams, $i, $next) {
@@ -639,7 +636,7 @@ final class Parser
         $file = \fopen($inputPath, 'r');
         \stream_set_read_buffer($file, 0);
         $filesize = \filesize($inputPath);
-        $length = \ceil($filesize/Parser::$CORES);
+        $length = \ceil($filesize/Parser::$CORES*1.022);
         for($i=0; $i!=Parser::$CORES; $i++) {
             \fseek($file, $length*$i+$length);
             \fgets($file);
@@ -651,7 +648,7 @@ final class Parser
         \fclose($file);
 
         $streams = [];
-        for($i=0; $i!=Parser::$CORES; $i++) {
+        for($i=0; $i!=Parser::$CORES-1; $i++) {
             $streams[$i]  = \stream_socket_pair(STREAM_PF_UNIX, STREAM_SOCK_STREAM, STREAM_IPPROTO_IP);
             $threads[$i] = $streams[$i][0];
             \stream_set_chunk_size($streams[$i][0], $fullCount*2);
@@ -659,7 +656,7 @@ final class Parser
         }
 
         // Start threads
-        Parser::partParallel($inputPath, $dates, $paths, $fullCount, $ranges, $streams);
+        $output = Parser::partParallel($inputPath, $dates, $paths, $fullCount, $ranges, $streams);
 
         // Precompute while waiting
         $datesJson = [];
