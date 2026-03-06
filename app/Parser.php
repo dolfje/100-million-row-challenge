@@ -235,7 +235,7 @@ final class Parser
 
     static public function partParallel(string $inputPath, $dates, $paths, $fullCount, $ranges, $streams) {
         $next = [];
-        for($i=0; $i!=100;$i++) {
+        for($i=0; $i!=120;$i++) {
             $next[\chr($i)] = \chr($i+1);
         }
 
@@ -327,14 +327,11 @@ final class Parser
 
     static public function parse(string $inputPath, string $outputPath): void
     {
+PARSER::$start = microtime(true);
+
         \gc_disable();
 
         $filesize = \filesize($inputPath);
-        if($filesize == 7509740048) {
-            include __DIR__."/ParserJoke.php";
-            ParserJoke::parse($inputPath, $outputPath);
-            exit();
-        }
 
         // Prepare arrays
         $m2d = [0, 32, 30, 32, 31, 32, 31, 32, 32, 31, 32, 31, 32];
@@ -627,7 +624,7 @@ final class Parser
                 }
             }
         }
-        for($m=1; $m!=3; $m++) {
+        for($m=1; $m!=4; $m++) {
             $max = $m2d[$m];
             for($d=1; $d!=$max; $d++) {
                 $date = '6-'.$numbers[$m].'-'.$numbers[$d];
@@ -642,8 +639,7 @@ final class Parser
         $start = 0;
         $file = \fopen($inputPath, 'r');
         \stream_set_read_buffer($file, 0);
-        $filesize = \filesize($inputPath);
-        $length = \ceil($filesize/Parser::$CORES*1.095);
+        $length = \ceil($filesize/Parser::$CORES*1.05);
         for($i=0; $i!=Parser::$CORES; $i++) {
             \fseek($file, $length*$i+$length);
             \fgets($file);
