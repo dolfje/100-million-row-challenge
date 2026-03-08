@@ -3,13 +3,18 @@
 final class Parser
 {
     static $FIRST_READ_CHUNK = 165_000;
-    static $READ_CHUNK = 165_000;
-    static $CORES = 9;
+    static $READ_CHUNK = 500_000;
+    static $CORES = 8;
 
-    static public function partParse(string $inputPath, int $start, int $length, $dates, $paths, $fullCount, $next) {
+    static public function partParse(string $inputPath, int $start, int $length, $dates, $paths, $fullCount) {
         $read = 0;
 
         $output = \str_repeat(\chr(0), $fullCount);
+
+        $next = [];
+        for($i=0; $i!=100;$i++) {
+            $next[\chr($i)] = \chr($i+1);
+        }
 
         $file = \fopen($inputPath, 'r');
         \stream_set_read_buffer($file, 0);
@@ -30,11 +35,67 @@ final class Parser
             }
 
             $lenAsked -= 10;
-            $lenAskedBatch = $lenAsked - 1900;
+            $lenAskedBatch = $lenAsked - 2500;
 
             $nextPos = -1;
             $pos = -1;
             while($nextPos < $lenAskedBatch) {
+                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
+                $pathId = $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
+                $index = $dates[\substr($buffer, $pos - 22, 7)]+$pathId;
+                $output[$index] = $next[$output[$index]];
+
+                $order[$pathId] = true;
+
+                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
+                $pathId = $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
+                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$pathId;
+                $output[$index] = $next[$output[$index]];
+
+                $order[$pathId] = true;
+
+                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
+                $pathId = $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
+                $index = $dates[\substr($buffer, $pos - 22, 7)]+$pathId;
+                $output[$index] = $next[$output[$index]];
+
+                $order[$pathId] = true;
+
+                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
+                $pathId = $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
+                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$pathId;
+                $output[$index] = $next[$output[$index]];
+
+                $order[$pathId] = true;
+
+                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
+                $pathId = $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
+                $index = $dates[\substr($buffer, $pos - 22, 7)]+$pathId;
+                $output[$index] = $next[$output[$index]];
+
+                $order[$pathId] = true;
+
+                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
+                $pathId = $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
+                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$pathId;
+                $output[$index] = $next[$output[$index]];
+
+                $order[$pathId] = true;
+
+                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
+                $pathId = $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
+                $index = $dates[\substr($buffer, $pos - 22, 7)]+$pathId;
+                $output[$index] = $next[$output[$index]];
+
+                $order[$pathId] = true;
+
+                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
+                $pathId = $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
+                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$pathId;
+                $output[$index] = $next[$output[$index]];
+
+                $order[$pathId] = true;
+
                 $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
                 $pathId = $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                 $index = $dates[\substr($buffer, $pos - 22, 7)]+$pathId;
@@ -118,11 +179,43 @@ final class Parser
             }
 
             $lenAsked -= 10;
-            $lenAskedBatch = $lenAsked - 1900;
+            $lenAskedBatch = $lenAsked - 2500;
 
             $nextPos = -1;
             $pos = -1;
             while($nextPos < $lenAskedBatch) {
+                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
+                $index = $dates[\substr($buffer, $pos - 22, 7)]+$paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
+                $output[$index] = $next[$output[$index]];
+
+                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
+                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
+                $output[$index] = $next[$output[$index]];
+
+                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
+                $index = $dates[\substr($buffer, $pos - 22, 7)]+$paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
+                $output[$index] = $next[$output[$index]];
+
+                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
+                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
+                $output[$index] = $next[$output[$index]];
+
+                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
+                $index = $dates[\substr($buffer, $pos - 22, 7)]+$paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
+                $output[$index] = $next[$output[$index]];
+
+                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
+                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
+                $output[$index] = $next[$output[$index]];
+
+                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
+                $index = $dates[\substr($buffer, $pos - 22, 7)]+$paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
+                $output[$index] = $next[$output[$index]];
+
+                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
+                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
+                $output[$index] = $next[$output[$index]];
+
                 $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
                 $index = $dates[\substr($buffer, $pos - 22, 7)]+$paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                 $output[$index] = $next[$output[$index]];
@@ -234,11 +327,6 @@ final class Parser
     }
 
     static public function partParallel(string $inputPath, $dates, $paths, $fullCount, $ranges, $streams) {
-        $next = [];
-        for($i=0; $i!=120;$i++) {
-            $next[\chr($i)] = \chr($i+1);
-        }
-
         $pid = \pcntl_fork(); // 0.2
         if ($pid == 0) {
             fclose($streams[4][1]);
@@ -252,11 +340,11 @@ final class Parser
                 $pid = \pcntl_fork(); // 0.6
                 if ($pid == 0) {
                     fclose($streams[1][1]);
-                    Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 0, $next);
+                    Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 0);
                     exit();
                 }
                 fclose($streams[0][1]);
-                Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 1, $next);
+                Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 1);
                 exit();
             }
             fclose($streams[0][1]);
@@ -264,11 +352,11 @@ final class Parser
             $pid = \pcntl_fork(); // 0.6
             if ($pid == 0) {
                 fclose($streams[3][1]);
-                Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 2, $next);
+                Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 2);
                 exit();
             }
             fclose($streams[2][1]);
-            Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 3, $next);
+            Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 3);
             exit();
         }
 
@@ -283,11 +371,11 @@ final class Parser
             $pid = \pcntl_fork(); // 0.6
             if ($pid == 0) {
                 fclose($streams[5][1]);
-                Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 4, $next);
+                Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 4);
                 exit();
             }
             fclose($streams[4][1]);
-            Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 5, $next);
+            Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 5);
             exit();
         }
 
@@ -298,27 +386,20 @@ final class Parser
             $pid = \pcntl_fork(); // 0.8
             if ($pid == 0) {
                 fclose($streams[7][1]);
-                Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 6, $next);
+                Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 6);
                 exit();
             }
             fclose($streams[6][1]);
-            Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 7, $next);
+            Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 7);
             exit();
         }
 
-        fclose($streams[6][1]);  
         fclose($streams[7][1]);
-
-        $output = \array_fill(0, $fullCount, 0);
-        $j = 0;
-        foreach(\unpack('C*', Parser::partParse($inputPath, $ranges[8][0], $ranges[8][1]-$ranges[8][0], $dates, $paths, $fullCount, $next)) as $data) {
-            $output[$j++] += $data;
-        }
-        return $output;
+        fclose($streams[6][1]);           
     }
 
-    static public function partParallelGo(string $inputPath, $dates, $paths, $fullCount, $ranges, $streams, $i, $next) {
-        $output = Parser::partParse($inputPath, $ranges[$i][0], $ranges[$i][1]-$ranges[$i][0], $dates, $paths, $fullCount, $next);
+    static public function partParallelGo(string $inputPath, $dates, $paths, $fullCount, $ranges, $streams, $i) {
+        $output = Parser::partParse($inputPath, $ranges[$i][0], $ranges[$i][1]-$ranges[$i][0], $dates, $paths, $fullCount);
         \fwrite($streams[$i][1], $output);
         \fflush($streams[$i][1]);
         \fclose($streams[$i][1]);
@@ -328,8 +409,6 @@ final class Parser
     static public function parse(string $inputPath, string $outputPath): void
     {
         \gc_disable();
-
-        $filesize = \filesize($inputPath);
 
         // Prepare arrays
         $m2d = [0, 32, 30, 32, 31, 32, 31, 32, 32, 31, 32, 31, 32];
@@ -622,7 +701,7 @@ final class Parser
                 }
             }
         }
-        for($m=1; $m!=4; $m++) {
+        for($m=1; $m!=3; $m++) {
             $max = $m2d[$m];
             for($d=1; $d!=$max; $d++) {
                 $date = '6-'.$numbers[$m].'-'.$numbers[$d];
@@ -637,7 +716,8 @@ final class Parser
         $start = 0;
         $file = \fopen($inputPath, 'r');
         \stream_set_read_buffer($file, 0);
-        $length = \ceil($filesize/Parser::$CORES*1.05);
+        $filesize = \filesize($inputPath);
+        $length = \ceil($filesize/Parser::$CORES);
         for($i=0; $i!=Parser::$CORES; $i++) {
             \fseek($file, $length*$i+$length);
             \fgets($file);
@@ -649,7 +729,7 @@ final class Parser
         \fclose($file);
 
         $streams = [];
-        for($i=0; $i!=Parser::$CORES-1; $i++) {
+        for($i=0; $i!=Parser::$CORES; $i++) {
             $streams[$i]  = \stream_socket_pair(STREAM_PF_UNIX, STREAM_SOCK_STREAM, STREAM_IPPROTO_IP);
             $threads[$i] = $streams[$i][0];
             \stream_set_chunk_size($streams[$i][0], $fullCount*2);
@@ -657,7 +737,7 @@ final class Parser
         }
 
         // Start threads
-        $output = Parser::partParallel($inputPath, $dates, $paths, $fullCount, $ranges, $streams);
+        Parser::partParallel($inputPath, $dates, $paths, $fullCount, $ranges, $streams);
 
         // Precompute while waiting
         $datesJson = [];
@@ -674,31 +754,29 @@ final class Parser
         $output = \array_fill(0, $fullCount, 0);
 
         // Read threads
-        $read = []; $write = []; $except = []; $outputs = [0,0,0,0,0,0,0,0,0]; $output0 = "";
+        $read = []; $write = []; $except = []; $outputs = ["","","","","","","",""];
         while(\count($threads) != 0) {
             $read = $threads;
             \stream_select($read, $write, $except, 5);
             foreach($read as $i => $thread) {
-                if($i == 0) {
-                    $output0 .= \fread($thread, Parser::$READ_CHUNK);
-                }
-                else {
-                    $j = $outputs[$i];
-                    foreach(\unpack('C*', \fread($thread, Parser::$READ_CHUNK)) as $data) {
-                        $output[$j++] += $data;
-                    }
-                    $outputs[$i] = $j;
-                }
+                $outputs[$i] .= \fread($thread, Parser::$READ_CHUNK);
 
-                if(\feof($thread)) {
+                if(\feof($thread) && $outputs[$i] != "") {
                     if($i == 0) {
-                        $data = \unpack('C*', \substr($output0, 0, $fullCount));
+                        $data = \unpack('C*', \substr($outputs[$i], 0, $fullCount));
                         for($j=0; $j!=$fullCount; $j++) {
                             $output[$j] += $data[$j+1];
                         }
-                        $sortedPaths = \unpack("v*", \substr($output0, $fullCount));
+                        $sortedPaths = \unpack("v*", \substr($outputs[$i], $fullCount));
                         $pathsJson[$sortedPaths[1]] = \substr($pathsJson[$sortedPaths[1]], 7);
-                        unset($output0);
+                        unset($outputs[$i]);
+                    }
+                    else {
+                        $data = \unpack('C*', $outputs[$i]);
+                        for($j=0; $j!=$fullCount; $j++) {
+                            $output[$j] += $data[$j+1];
+                        }
+                        unset($outputs[$i]);
                     }
                     unset($threads[$i]);
                 }
