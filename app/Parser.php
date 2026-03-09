@@ -4,7 +4,7 @@ final class Parser
 {
     static $FIRST_READ_CHUNK = 165_000;
     static $READ_CHUNK = 165_000;
-    static $CORES = 14;
+    static $CORES = 8;
 
     static public function partParse(string $inputPath, int $start, int $length, $dates, $paths, $fullCount, $next) {
         $read = 0;
@@ -360,26 +360,78 @@ final class Parser
             $next[\chr($i)] = \chr($i+1);
         }
 
-        for($i=0; $i!=Parser::$CORES; $i++) {
-            $pid = \pcntl_fork();
+        $pid = \pcntl_fork(); // 0.2
+        if ($pid == 0) {
+            fclose($streams[4][1]);
+            fclose($streams[5][1]);
+            fclose($streams[6][1]);
+            fclose($streams[7][1]);                
+            $pid = \pcntl_fork(); // 0.4
             if ($pid == 0) {
-                Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, $i, $next);
+                fclose($streams[2][1]);
+                fclose($streams[3][1]);
+                $pid = \pcntl_fork(); // 0.6
+                if ($pid == 0) {
+                    fclose($streams[1][1]);
+                    Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 0, $next);
+                    exit();
+                }
+                fclose($streams[0][1]);
+                Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 1, $next);
                 exit();
             }
+            fclose($streams[0][1]);
+            fclose($streams[1][1]);
+            $pid = \pcntl_fork(); // 0.6
+            if ($pid == 0) {
+                fclose($streams[3][1]);
+                Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 2, $next);
+                exit();
+            }
+            fclose($streams[2][1]);
+            Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 3, $next);
+            exit();
         }
 
-        for($j=0; isset($streams[$j]); $j++) {
-            fclose($streams[$j][1]);
-        }        
+        fclose($streams[0][1]);
+        fclose($streams[1][1]);
+        fclose($streams[2][1]);
+        fclose($streams[3][1]);
+        $pid = \pcntl_fork(); // 0.4
+        if ($pid == 0) {
+            fclose($streams[6][1]);
+            fclose($streams[7][1]);
+            $pid = \pcntl_fork(); // 0.6
+            if ($pid == 0) {
+                fclose($streams[5][1]);
+                Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 4, $next);
+                exit();
+            }
+            fclose($streams[4][1]);
+            Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 5, $next);
+            exit();
+        }
+
+        fclose($streams[4][1]);
+        fclose($streams[5][1]);
+        $pid = \pcntl_fork(); // 0.6
+        if ($pid == 0) {
+            $pid = \pcntl_fork(); // 0.8
+            if ($pid == 0) {
+                fclose($streams[7][1]);
+                Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 6, $next);
+                exit();
+            }
+            fclose($streams[6][1]);
+            Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 7, $next);
+            exit();
+        }
+
+        fclose($streams[6][1]);
+        fclose($streams[7][1]);           
     }
 
     static public function partParallelGo(string $inputPath, $dates, $paths, $fullCount, $ranges, $streams, $i, $next) {
-        for($j=0; isset($streams[$j]); $j++) {
-            if($j != $i) {
-                fclose($streams[$j][1]);
-            }
-        }
-
         $output = Parser::partParse($inputPath, $ranges[$i][0], $ranges[$i][1]-$ranges[$i][0], $dates, $paths, $fullCount, $next);
         if($i == 0) {
             \fwrite($streams[$i][1], $output);
