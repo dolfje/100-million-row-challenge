@@ -400,16 +400,7 @@ final class Parser
 
     static public function partParallelGo(string $inputPath, $dates, $paths, $fullCount, $ranges, $streams, $i, $next) {
         $output = Parser::partParse($inputPath, $ranges[$i][0], $ranges[$i][1]-$ranges[$i][0], $dates, $paths, $fullCount, $next);
-        if($i == 0) {
-            \fwrite($streams[$i][1], $output);
-        }
-        else {
-            $length = $fullCount;
-            while($output[$length-1] == "\0" && $output[$length-2] == "\0" && $output[$length-3] == "\0")
-                $length-=268;
-
-            \fwrite($streams[$i][1], $output, $length);
-        }
+        \fwrite($streams[$i][1], $output);
         \fflush($streams[$i][1]);
         \fclose($streams[$i][1]);
         exit();
