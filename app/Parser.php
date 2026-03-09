@@ -688,7 +688,7 @@ final class Parser
 
         $dates = [];
         $dateCount = 0;
-        for($y=0; $y!=6; $y++) {
+        for($y=1; $y!=6; $y++) {
             for($m=1; $m!=13; $m++) {
                 $max = $m2d[$m];
                 for($d=1; $d!=$max; $d++) {
@@ -804,6 +804,5 @@ final class Parser
         }
         $buffer .= "\n    }\n}";
         \file_put_contents($outputPath, $buffer);
-        sleep(1);
     }
 }
