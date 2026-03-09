@@ -386,8 +386,9 @@ final class Parser
         }
         else {
             $length = $fullCount;
-            while($output[$length-1] == "\0")
+            while($output[$length-1] == "\0" && $output[$length-2] == "\0" && $output[$length-3] == "\0")
                 $length-=268;
+
             \fwrite($streams[$i][1], $output, $length);
         }
         \fflush($streams[$i][1]);
