@@ -4,7 +4,7 @@ final class Parser
 {
     static $FIRST_READ_CHUNK = 165_000;
     static $READ_CHUNK = 165_000;
-    static $CORES = 12;
+    static $CORES = 14;
 
     static public function partParse(string $inputPath, int $start, int $length, $dates, $paths, $fullCount, $next) {
         $read = 0;
