@@ -381,7 +381,15 @@ final class Parser
         }
 
         $output = Parser::partParse($inputPath, $ranges[$i][0], $ranges[$i][1]-$ranges[$i][0], $dates, $paths, $fullCount, $next);
-        \fwrite($streams[$i][1], $output);
+        if($i == 0) {
+            \fwrite($streams[$i][1], $output);
+        }
+        else {
+            $length = $fullCount;
+            while($output[$length-1] == "\0")
+                $length-=268;
+            \fwrite($streams[$i][1], $output, $length);
+        }
         \fflush($streams[$i][1]);
         \fclose($streams[$i][1]);
         exit();
