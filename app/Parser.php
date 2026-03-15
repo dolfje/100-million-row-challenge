@@ -33,7 +33,21 @@ final class Parser
             $pos = $lenAsked - 23;
             $read += $lenAsked;
 
-            while($pos > 600) {
+            while($pos > 800) {
+                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
+                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $output[$i] = $n[$output[$i]];
+                $pos -= $p >> 9;
+
+                $order[$p & 511] = $orderI++;
+
+                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
+                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $output[$i] = $n[$output[$i]];
+                $pos -= $p >> 9;
+
+                $order[$p & 511] = $orderI++;
+                
                 $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
@@ -119,7 +133,17 @@ final class Parser
             $pos = $lenAsked - 23;
             $read += $lenAsked;
 
-            while($pos > 600) {
+            while($pos > 800) {
+                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
+                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $output[$i] = $n[$output[$i]];
+                $pos -= $p >> 9;
+
+                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
+                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $output[$i] = $n[$output[$i]];
+                $pos -= $p >> 9;                
+
                 $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
