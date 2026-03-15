@@ -173,172 +173,50 @@ final class Parser
                 $buffer .= $extra;
             }
 
-            $lenAsked -= 23;
-            $lenAskedBatch = $lenAsked - 2500;
+            $pos = $lenAsked - 23;
+            $read += $lenAsked;
 
-            $nextPos = -1;
-            $pos = $lenAsked;
-            /*while($nextPos < $lenAskedBatch) {
-                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
-                $index = $dates[\substr($buffer, $pos - 22, 7)]+
-                    ($paths[\substr($buffer, $nextPos + 30, 6)] ?? $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)]);
+            while($pos > 600) {
+                $pathId = ($paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 22)]);
+                $index = $dates[\substr($buffer, $pos, 7)]+($pathId & 511);
                 $output[$index] = $next[$output[$index]];
+                $pos -= ($pathId >> 9) + 27;
 
-                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
-                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+
-                    ($paths[\substr($buffer, $pos + 30, 6)] ?? $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)]);
+                $pathId = ($paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 22)]);
+                $index = $dates[\substr($buffer, $pos, 7)]+($pathId & 511);
                 $output[$index] = $next[$output[$index]];
+                $pos -= ($pathId >> 9) + 27;
 
-                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
-                $index = $dates[\substr($buffer, $pos - 22, 7)]+
-                    ($paths[\substr($buffer, $nextPos + 30, 6)] ?? $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)]);
+                $pathId = ($paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 22)]);
+                $index = $dates[\substr($buffer, $pos, 7)]+($pathId & 511);
                 $output[$index] = $next[$output[$index]];
+                $pos -= ($pathId >> 9) + 27;
 
-                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
-                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+
-                    ($paths[\substr($buffer, $pos + 30, 6)] ?? $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)]);
+                $pathId = ($paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 22)]);
+                $index = $dates[\substr($buffer, $pos, 7)]+($pathId & 511);
                 $output[$index] = $next[$output[$index]];
+                $pos -= ($pathId >> 9) + 27;
 
-                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
-                $index = $dates[\substr($buffer, $pos - 22, 7)]+
-                    ($paths[\substr($buffer, $nextPos + 30, 6)] ?? $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)]);
+                $pathId = ($paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 22)]);
+                $index = $dates[\substr($buffer, $pos, 7)]+($pathId & 511);
                 $output[$index] = $next[$output[$index]];
+                $pos -= ($pathId >> 9) + 27;
 
-                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
-                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+
-                    ($paths[\substr($buffer, $pos + 30, 6)] ?? $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)]);
+                $pathId = ($paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 22)]);
+                $index = $dates[\substr($buffer, $pos, 7)]+($pathId & 511);
                 $output[$index] = $next[$output[$index]];
+                $pos -= ($pathId >> 9) + 27;
 
-                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
-                $index = $dates[\substr($buffer, $pos - 22, 7)]+
-                    ($paths[\substr($buffer, $nextPos + 30, 6)] ?? $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)]);
+                $pathId = ($paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 22)]);
+                $index = $dates[\substr($buffer, $pos, 7)]+($pathId & 511);
                 $output[$index] = $next[$output[$index]];
+                $pos -= ($pathId >> 9) + 27;
 
-                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
-                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+
-                    ($paths[\substr($buffer, $pos + 30, 6)] ?? $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)]);
+                $pathId = ($paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 22)]);
+                $index = $dates[\substr($buffer, $pos, 7)]+($pathId & 511);
                 $output[$index] = $next[$output[$index]];
-
-                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
-                $index = $dates[\substr($buffer, $pos - 22, 7)]+
-                    ($paths[\substr($buffer, $nextPos + 30, 6)] ?? $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)]);
-                $output[$index] = $next[$output[$index]];
-
-                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
-                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+
-                    ($paths[\substr($buffer, $pos + 30, 6)] ?? $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)]);
-                $output[$index] = $next[$output[$index]];
-
-                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
-                $index = $dates[\substr($buffer, $pos - 22, 7)]+
-                    ($paths[\substr($buffer, $nextPos + 30, 6)] ?? $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)]);
-                $output[$index] = $next[$output[$index]];
-
-                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
-                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+
-                    ($paths[\substr($buffer, $pos + 30, 6)] ?? $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)]);
-                $output[$index] = $next[$output[$index]];
-
-                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
-                $index = $dates[\substr($buffer, $pos - 22, 7)]+
-                    ($paths[\substr($buffer, $nextPos + 30, 6)] ?? $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)]);
-                $output[$index] = $next[$output[$index]];
-
-                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
-                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+
-                    ($paths[\substr($buffer, $pos + 30, 6)] ?? $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)]);
-                $output[$index] = $next[$output[$index]];
-
-                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
-                $index = $dates[\substr($buffer, $pos - 22, 7)]+
-                    ($paths[\substr($buffer, $nextPos + 30, 6)] ?? $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)]);
-                $output[$index] = $next[$output[$index]];
-
-                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
-                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+
-                    ($paths[\substr($buffer, $pos + 30, 6)] ?? $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)]);
-                $output[$index] = $next[$output[$index]];
-
-                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
-                $index = $dates[\substr($buffer, $pos - 22, 7)]+
-                    ($paths[\substr($buffer, $nextPos + 30, 6)] ?? $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)]);
-                $output[$index] = $next[$output[$index]];
-
-                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
-                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+
-                    ($paths[\substr($buffer, $pos + 30, 6)] ?? $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)]);
-                $output[$index] = $next[$output[$index]];
-
-                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
-                $index = $dates[\substr($buffer, $pos - 22, 7)]+
-                    ($paths[\substr($buffer, $nextPos + 30, 6)] ?? $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)]);
-                $output[$index] = $next[$output[$index]];
-
-                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
-                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+
-                    ($paths[\substr($buffer, $pos + 30, 6)] ?? $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)]);
-                $output[$index] = $next[$output[$index]];
-
-                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
-                $index = $dates[\substr($buffer, $pos - 22, 7)]+
-                    ($paths[\substr($buffer, $nextPos + 30, 6)] ?? $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)]);
-                $output[$index] = $next[$output[$index]];
-
-                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
-                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+
-                    ($paths[\substr($buffer, $pos + 30, 6)] ?? $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)]);
-                $output[$index] = $next[$output[$index]];
-
-                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
-                $index = $dates[\substr($buffer, $pos - 22, 7)]+
-                    ($paths[\substr($buffer, $nextPos + 30, 6)] ?? $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)]);
-                $output[$index] = $next[$output[$index]];
-
-                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
-                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+
-                    ($paths[\substr($buffer, $pos + 30, 6)] ?? $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)]);
-                $output[$index] = $next[$output[$index]];
-
-                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
-                $index = $dates[\substr($buffer, $pos - 22, 7)]+
-                    ($paths[\substr($buffer, $nextPos + 30, 6)] ?? $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)]);
-                $output[$index] = $next[$output[$index]];
-
-                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
-                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+
-                    ($paths[\substr($buffer, $pos + 30, 6)] ?? $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)]);
-                $output[$index] = $next[$output[$index]];
-
-                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
-                $index = $dates[\substr($buffer, $pos - 22, 7)]+
-                    ($paths[\substr($buffer, $nextPos + 30, 6)] ?? $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)]);
-                $output[$index] = $next[$output[$index]];
-
-                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
-                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+
-                    ($paths[\substr($buffer, $pos + 30, 6)] ?? $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)]);
-                $output[$index] = $next[$output[$index]];
-
-                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
-                $index = $dates[\substr($buffer, $pos - 22, 7)]+
-                    ($paths[\substr($buffer, $nextPos + 30, 6)] ?? $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)]);
-                $output[$index] = $next[$output[$index]];
-
-                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
-                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+
-                    ($paths[\substr($buffer, $pos + 30, 6)] ?? $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)]);
-                $output[$index] = $next[$output[$index]];
-
-                $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
-                $index = $dates[\substr($buffer, $pos - 22, 7)]+
-                    ($paths[\substr($buffer, $nextPos + 30, 6)] ?? $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)]);
-                $output[$index] = $next[$output[$index]];
-
-                $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
-                $index = $dates[\substr($buffer, $nextPos - 22, 7)]+
-                    ($paths[\substr($buffer, $pos + 30, 6)] ?? $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)]);
-                $output[$index] = $next[$output[$index]];
-            }*/
+                $pos -= ($pathId >> 9) + 27;
+            }
 
             while($pos > 10) {
                 $pathId = ($paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 22)]);
@@ -346,8 +224,6 @@ final class Parser
                 $output[$index] = $next[$output[$index]];
                 $pos -= ($pathId >> 9) + 27;
             }
-
-            $read += $lenAsked+23;
         }
 
         return $output.$orderOutput;
@@ -361,73 +237,73 @@ final class Parser
 
         $pid = \pcntl_fork(); // 0.2
         if ($pid == 0) {
-            fclose($streams[4][1]);
-            fclose($streams[5][1]);
-            fclose($streams[6][1]);
-            fclose($streams[7][1]);                
+            \fclose($streams[4][1]);
+            \fclose($streams[5][1]);
+            \fclose($streams[6][1]);
+            \fclose($streams[7][1]);                
             $pid = \pcntl_fork(); // 0.4
             if ($pid == 0) {
-                fclose($streams[2][1]);
-                fclose($streams[3][1]);
+                \fclose($streams[2][1]);
+                \fclose($streams[3][1]);
                 $pid = \pcntl_fork(); // 0.6
                 if ($pid == 0) {
-                    fclose($streams[1][1]);
+                    \fclose($streams[1][1]);
                     Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 0, $next);
                     exit();
                 }
-                fclose($streams[0][1]);
+                \fclose($streams[0][1]);
                 Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 1, $next);
                 exit();
             }
-            fclose($streams[0][1]);
-            fclose($streams[1][1]);
+            \fclose($streams[0][1]);
+            \fclose($streams[1][1]);
             $pid = \pcntl_fork(); // 0.6
             if ($pid == 0) {
-                fclose($streams[3][1]);
+                \fclose($streams[3][1]);
                 Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 2, $next);
                 exit();
             }
-            fclose($streams[2][1]);
+            \fclose($streams[2][1]);
             Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 3, $next);
             exit();
         }
 
-        fclose($streams[0][1]);
-        fclose($streams[1][1]);
-        fclose($streams[2][1]);
-        fclose($streams[3][1]);
+        \fclose($streams[0][1]);
+        \fclose($streams[1][1]);
+        \fclose($streams[2][1]);
+        \fclose($streams[3][1]);
         $pid = \pcntl_fork(); // 0.4
         if ($pid == 0) {
-            fclose($streams[6][1]);
-            fclose($streams[7][1]);
+            \fclose($streams[6][1]);
+            \fclose($streams[7][1]);
             $pid = \pcntl_fork(); // 0.6
             if ($pid == 0) {
-                fclose($streams[5][1]);
+                \fclose($streams[5][1]);
                 Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 4, $next);
                 exit();
             }
-            fclose($streams[4][1]);
+            \fclose($streams[4][1]);
             Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 5, $next);
             exit();
         }
 
-        fclose($streams[4][1]);
-        fclose($streams[5][1]);
+        \fclose($streams[4][1]);
+        \fclose($streams[5][1]);
         $pid = \pcntl_fork(); // 0.6
         if ($pid == 0) {
             $pid = \pcntl_fork(); // 0.8
             if ($pid == 0) {
-                fclose($streams[7][1]);
+                \fclose($streams[7][1]);
                 Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 6, $next);
                 exit();
             }
-            fclose($streams[6][1]);
+            \fclose($streams[6][1]);
             Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 7, $next);
             exit();
         }
 
-        fclose($streams[6][1]);
-        fclose($streams[7][1]);           
+        \fclose($streams[6][1]);
+        \fclose($streams[7][1]);           
     }
 
     static public function partParallelGo(string $inputPath, $dates, $paths, $fullCount, $ranges, $streams, $i, $next) {
@@ -738,10 +614,10 @@ final class Parser
         );
         foreach($pages as $page) {
             if(isset($long[$page])) {
-                $paths[substr("https://stitcher.io/blog/".$page, -22)] = ((strlen($page)+25) << 9) | $pathCount++;
+                $paths[\substr("https://stitcher.io/blog/".$page, -22)] = ((\strlen($page)+25) << 9) | $pathCount++;
             }
             else {
-                $paths[substr("https://stitcher.io/blog/".$page, -13)] = ((strlen($page)+25) << 9) | $pathCount++;
+                $paths[\substr("https://stitcher.io/blog/".$page, -13)] = ((\strlen($page)+25) << 9) | $pathCount++;
             }
         }
 
