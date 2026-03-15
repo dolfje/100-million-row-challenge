@@ -47,7 +47,7 @@ final class Parser
                 $pos -= $p >> 9;
 
                 $order[$p & 511] = $orderI++;
-                
+
                 $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
@@ -192,105 +192,7 @@ final class Parser
                 $pos -= $p >> 9;
             }
         }
-
         return $output.$orderOutput;
-    }
-
-    static public function partParallel(string $inputPath, $dates, $paths, $fullCount, $ranges, $streams) {
-        $next = [];
-        for($i=0; $i!=120;$i++) {
-            $next[\chr($i)] = \chr($i+1);
-        }
-
-        $pid = \pcntl_fork(); // 0.2
-        if ($pid == 0) {
-            \fclose($streams[4][1]);
-            \fclose($streams[5][1]);
-            \fclose($streams[6][1]);
-            \fclose($streams[7][1]);  
-            \fclose($streams[8][1]);              
-            $pid = \pcntl_fork(); // 0.4
-            if ($pid == 0) {
-                \fclose($streams[2][1]);
-                \fclose($streams[3][1]);
-                $pid = \pcntl_fork(); // 0.6
-                if ($pid == 0) {
-                    \fclose($streams[1][1]);
-                    Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 0, $next);
-                    exit();
-                }
-                \fclose($streams[0][1]);
-                Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 1, $next);
-                exit();
-            }
-            \fclose($streams[0][1]);
-            \fclose($streams[1][1]);
-            $pid = \pcntl_fork(); // 0.6
-            if ($pid == 0) {
-                \fclose($streams[3][1]);
-                Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 2, $next);
-                exit();
-            }
-            \fclose($streams[2][1]);
-            Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 3, $next);
-            exit();
-        }
-
-        \fclose($streams[0][1]);
-        \fclose($streams[1][1]);
-        \fclose($streams[2][1]);
-        \fclose($streams[3][1]);
-        $pid = \pcntl_fork(); // 0.4
-        if ($pid == 0) {
-            \fclose($streams[6][1]);
-            \fclose($streams[7][1]);
-            \fclose($streams[8][1]);
-            $pid = \pcntl_fork(); // 0.6
-            if ($pid == 0) {
-                \fclose($streams[5][1]);
-                Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 4, $next);
-                exit();
-            }
-            \fclose($streams[4][1]);
-            Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 5, $next);
-            exit();
-        }
-
-        \fclose($streams[4][1]);
-        \fclose($streams[5][1]);
-        $pid = \pcntl_fork(); // 0.6
-        if ($pid == 0) {
-            \fclose($streams[8][1]);   
-            
-            $pid = \pcntl_fork(); // 0.8
-            if ($pid == 0) {
-                \fclose($streams[7][1]);
-                Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 6, $next);
-                exit();
-            }
-            \fclose($streams[6][1]);
-            Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 7, $next);
-            exit();
-        }
-
-        \fclose($streams[6][1]);
-        \fclose($streams[7][1]); 
-        
-        $pid = \pcntl_fork(); // 0.8
-        if ($pid == 0) {
-            Parser::partParallelGo($inputPath, $dates, $paths, $fullCount, $ranges, $streams, 8, $next);
-            exit();
-        }
-
-        \fclose($streams[8][1]);        
-    }
-
-    static public function partParallelGo(string $inputPath, $dates, $paths, $fullCount, $ranges, $streams, $i, $next) {
-        $output = Parser::partParse($inputPath, $ranges[$i][0], $ranges[$i][1]-$ranges[$i][0], $dates, $paths, $fullCount, $next);
-        \fwrite($streams[$i][1], $output);
-        \fflush($streams[$i][1]);
-        \fclose($streams[$i][1]);
-        exit();
     }
 
     static public function parse(string $inputPath, string $outputPath): void
@@ -301,301 +203,300 @@ final class Parser
         $m2d = [0, 32, 30, 32, 31, 32, 31, 32, 32, 31, 32, 31, 32];
         $numbers = ['', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31'];
         $pages = [
-            'which-editor-to-choose',
-            'tackling_responsive_images-part_1',
-            'tackling_responsive_images-part_2',
-            'image_optimizers',
-            'static_sites_vs_caching',
-            'stitcher-alpha-4',
-            'simplest-plugin-support',
-            'stitcher-alpha-5',
-            'php-generics-and-why-we-need-them',
-            'stitcher-beta-1',
-            'array-objects-with-fixed-types',
-            'performance-101-building-the-better-web',
-            'process-forks',
-            'object-oriented-generators',
-            'responsive-images-as-css-background',
-            'a-programmers-cognitive-load',
-            'mastering-key-bindings',
-            'stitcher-beta-2',
-            'phpstorm-performance',
-            'optimised-uuids-in-mysql',
-            'asynchronous-php',
-            'mysql-import-json-binary-character-set',
-            'where-a-curly-bracket-belongs',
-            'mysql-query-logging',
-            'mysql-show-foreign-key-errors',
-            'responsive-images-done-right',
-            'phpstorm-tips-for-power-users',
-            'what-php-can-be',
-            'phpstorm-performance-issues-on-osx',
-            'dependency-injection-for-beginners',
-            'liskov-and-type-safety',
-            'acquisition-by-giants',
-            'visual-perception-of-code',
-            'service-locator-anti-pattern',
-            'the-web-in-2045',
-            'eloquent-mysql-views',
-            'laravel-view-models',
-            'laravel-view-models-vs-view-composers',
-            'organise-by-domain',
-            'array-merge-vs + ',
-            'share-a-blog-assertchris-io',
-            'phpstorm-performance-october-2018',
-            'structuring-unstructured-data',
-            'share-a-blog-codingwriter-com',
-            'new-in-php-73',
-            'share-a-blog-betterwebtype-com',
-            'have-you-thought-about-casing',
-            'comparing-dates',
-            'share-a-blog-sebastiandedeyne-com',
-            'analytics-for-developers',
-            'announcing-aggregate',
-            'php-jit',
-            'craftsmen-know-their-tools',
-            'laravel-queueable-actions',
-            'php-73-upgrade-mac',
-            'array-destructuring-with-list-in-php',
-            'unsafe-sql-functions-in-laravel',
-            'starting-a-newsletter',
-            'short-closures-in-php',
-            'solid-interfaces-and-final-rant-with-brent',
-            'php-in-2019',
-            'starting-a-podcast',
-            'a-project-at-spatie',
-            'what-are-objects-anyway-rant-with-brent',
-            'tests-and-types',
-            'typed-properties-in-php-74',
-            'preloading-in-php-74',
-            'things-dependency-injection-is-not-about',
-            'a-letter-to-the-php-team',
-            'a-letter-to-the-php-team-reply-to-joe',
-            'guest-posts',
-            'can-i-translate-your-blog',
-            'laravel-has-many-through',
-            'laravel-custom-relation-classes',
-            'new-in-php-74',
-            'php-74-upgrade-mac',
-            'php-preload-benchmarks',
-            'php-in-2020',
-            'enums-without-enums',
-            'bitwise-booleans-in-php',
-            'event-driven-php',
-            'minor-versions-breaking-changes',
-            'combining-event-sourcing-and-stateful-systems',
-            'array-chunk-in-php',
-            'php-8-in-8-code-blocks',
-            'builders-and-architects-two-types-of-programmers',
-            'the-ikea-effect',
-            'php-74-in-7-code-blocks',
-            'improvements-on-laravel-nova',
-            'type-system-in-php-survey',
-            'merging-multidimensional-arrays-in-php',
-            'what-is-array-plus-in-php',
-            'type-system-in-php-survey-results',
-            'constructor-promotion-in-php-8',
-            'abstract-resources-in-laravel-nova',
-            'braille-and-the-history-of-software',
-            'jit-in-real-life-web-applications',
-            'php-8-match-or-switch',
-            'why-we-need-named-params-in-php',
-            'shorthand-comparisons-in-php',
-            'php-8-before-and-after',
-            'php-8-named-arguments',
-            'my-journey-into-event-sourcing',
-            'differences',
-            'annotations',
-            'dont-get-stuck',
-            'attributes-in-php-8',
-            'the-case-for-transpiled-generics',
-            'phpstorm-scopes',
-            'why-light-themes-are-better-according-to-science',
-            'what-a-good-pr-looks-like',
-            'front-line-php',
-            'php-8-jit-setup',
-            'php-8-nullsafe-operator',
-            'new-in-php-8',
-            'php-8-upgrade-mac',
-            'when-i-lost-a-few-hundred-leads',
-            'websites-like-star-wars',
-            'php-reimagined',
-            'a-storm-in-a-glass-of-water',
-            'php-enums-before-php-81',
-            'php-enums',
-            'dont-write-your-own-framework',
-            'honesty',
-            'thoughts-on-event-sourcing',
-            'what-event-sourcing-is-not-about',
-            'fibers-with-a-grain-of-salt',
-            'php-in-2021',
-            'parallel-php',
-            'why-we-need-multi-line-short-closures-in-php',
-            'a-new-major-version-of-laravel-event-sourcing',
-            'what-about-config-builders',
-            'opinion-driven-design',
-            'php-version-stats-july-2021',
-            'what-about-request-classes',
-            'cloning-readonly-properties-in-php-81',
-            'an-event-driven-mindset',
-            'php-81-before-and-after',
-            'optimistic-or-realistic-estimates',
-            'we-dont-need-runtime-type-checks',
-            'the-road-to-php',
-            'why-do-i-write',
-            'rational-thinking',
-            'named-arguments-and-variadic-functions',
-            're-on-using-psr-abstractions',
-            'my-ikea-clock',
-            'php-81-readonly-properties',
-            'birth-and-death-of-a-framework',
-            'php-81-new-in-initializers',
-            'route-attributes',
-            'generics-in-php-video',
-            'php-81-in-8-code-blocks',
-            'new-in-php-81',
-            'php-81-performance-in-real-life',
-            'php-81-upgrade-mac',
-            'how-to-be-right-on-the-internet',
-            'php-version-stats-january-2022',
-            'php-in-2022',
-            'how-i-plan',
-            'twitter-home-made-me-miserable',
-            'its-your-fault',
-            'dealing-with-dependencies',
-            'php-in-2021-video',
-            'generics-in-php-1',
-            'generics-in-php-2',
-            'generics-in-php-3',
-            'generics-in-php-4',
-            'goodbye',
-            'strategies',
-            'dealing-with-deprecations',
-            'attribute-usage-in-top-php-packages',
-            'php-enum-style-guide',
-            'clean-and-minimalistic-phpstorm',
-            'stitcher-turns-5',
-            'php-version-stats-july-2022',
-            'evolution-of-a-php-object',
-            'uncertainty-doubt-and-static-analysis',
-            'road-to-php-82',
-            'php-performance-across-versions',
-            'light-colour-schemes-are-better',
-            'deprecated-dynamic-properties-in-php-82',
-            'php-reimagined-part-2',
-            'thoughts-on-asymmetric-visibility',
-            'uses',
-            'php-82-in-8-code-blocks',
-            'readonly-classes-in-php-82',
-            'deprecating-spatie-dto',
-            'php-82-upgrade-mac',
-            'php-annotated',
-            'you-cannot-find-me-on-mastodon',
-            'new-in-php-82',
-            'all-i-want-for-christmas',
-            'upgrading-to-php-82',
-            'php-version-stats-january-2023',
-            'php-in-2023',
-            'tabs-are-better',
-            'sponsors',
-            'why-curly-brackets-go-on-new-lines',
-            'my-10-favourite-php-functions',
-            'acronyms',
-            'code-folding',
-            'light-colour-schemes',
-            'slashdash',
-            'thank-you-kinsta',
-            'cloning-readonly-properties-in-php-83',
-            'limited-by-committee',
-            'things-considered-harmful',
-            'procedurally-generated-game-in-php',
-            'dont-be-clever',
-            'override-in-php-83',
-            'php-version-stats-july-2023',
-            'is-a-or-acts-as',
-            'rfc-vote',
-            'new-in-php-83',
-            'i-dont-know',
-            'passion-projects',
-            'php-version-stats-january-2024',
-            'the-framework-that-gets-out-of-your-way',
-            'a-syntax-highlighter-that-doesnt-suck',
-            'building-a-custom-language-in-tempest-highlight',
-            'testing-patterns',
-            'php-in-2024',
-            'tagged-singletons',
-            'twitter-exit',
-            'a-vocal-minority',
-            'php-version-stats-july-2024',
-            'you-should',
-            'new-with-parentheses-php-84',
-            'html-5-in-php-84',
-            'array-find-in-php-84',
-            'its-all-just-text',
-            'improved-lazy-loading',
-            'i-dont-code-the-way-i-used-to',
-            'php-84-at-least',
-            'extends-vs-implements',
-            'a-simple-approach-to-static-generation',
-            'building-a-framework',
-            'tagging-tempest-livestream',
-            'things-i-learned-writing-a-fiction-novel',
-            'unfair-advantage',
-            'new-in-php-84',
-            'php-version-stats-january-2025',
-            'theoretical-engineers',
-            'static-websites-with-tempest',
-            'request-objects-in-tempest',
-            'php-verse-2025',
-            'tempest-discovery-explained',
-            'php-version-stats-june-2025',
-            'pipe-operator-in-php-85',
-            'a-year-of-property-hooks',
-            'readonly-or-private-set',
-            'things-i-wish-i-knew',
-            'impact-charts',
-            'whats-your-motivator',
-            'vendor-locked',
-            'reducing-code-motion',
-            'sponsoring-open-source',
-            'my-wishlist-for-php-in-2026',
-            'game-changing-editions',
-            'new-in-php-85',
-            'flooded-rss',
-            'php-2026',
-            'open-source-strategies',
-            'not-optional',
-            'processing-11-million-rows',
-            'ai-induced-skepticism',
-            'php-86-partial-function-application',
-            '11-million-rows-in-seconds',
+            '.io/blog/which-editor-to-choose',
+            '.io/blog/tackling_responsive_images-part_1',
+            '.io/blog/tackling_responsive_images-part_2',
+            '.io/blog/image_optimizers',
+            '.io/blog/static_sites_vs_caching',
+            '.io/blog/stitcher-alpha-4',
+            '.io/blog/simplest-plugin-support',
+            '.io/blog/stitcher-alpha-5',
+            '.io/blog/php-generics-and-why-we-need-them',
+            '.io/blog/stitcher-beta-1',
+            '.io/blog/array-objects-with-fixed-types',
+            '.io/blog/performance-101-building-the-better-web',
+            '.io/blog/process-forks',
+            '.io/blog/object-oriented-generators',
+            '.io/blog/responsive-images-as-css-background',
+            '.io/blog/a-programmers-cognitive-load',
+            '.io/blog/mastering-key-bindings',
+            '.io/blog/stitcher-beta-2',
+            '.io/blog/phpstorm-performance',
+            '.io/blog/optimised-uuids-in-mysql',
+            '.io/blog/asynchronous-php',
+            '.io/blog/mysql-import-json-binary-character-set',
+            '.io/blog/where-a-curly-bracket-belongs',
+            '.io/blog/mysql-query-logging',
+            '.io/blog/mysql-show-foreign-key-errors',
+            '.io/blog/responsive-images-done-right',
+            '.io/blog/phpstorm-tips-for-power-users',
+            '.io/blog/what-php-can-be',
+            '.io/blog/phpstorm-performance-issues-on-osx',
+            '.io/blog/dependency-injection-for-beginners',
+            '.io/blog/liskov-and-type-safety',
+            '.io/blog/acquisition-by-giants',
+            '.io/blog/visual-perception-of-code',
+            '.io/blog/service-locator-anti-pattern',
+            '.io/blog/the-web-in-2045',
+            '.io/blog/eloquent-mysql-views',
+            '.io/blog/laravel-view-models',
+            '.io/blog/laravel-view-models-vs-view-composers',
+            '.io/blog/organise-by-domain',
+            '.io/blog/array-merge-vs + ',
+            '.io/blog/share-a-blog-assertchris-io',
+            '.io/blog/phpstorm-performance-october-2018',
+            '.io/blog/structuring-unstructured-data',
+            '.io/blog/share-a-blog-codingwriter-com',
+            '.io/blog/new-in-php-73',
+            '.io/blog/share-a-blog-betterwebtype-com',
+            '.io/blog/have-you-thought-about-casing',
+            '.io/blog/comparing-dates',
+            '.io/blog/share-a-blog-sebastiandedeyne-com',
+            '.io/blog/analytics-for-developers',
+            '.io/blog/announcing-aggregate',
+            '.io/blog/php-jit',
+            '.io/blog/craftsmen-know-their-tools',
+            '.io/blog/laravel-queueable-actions',
+            '.io/blog/php-73-upgrade-mac',
+            '.io/blog/array-destructuring-with-list-in-php',
+            '.io/blog/unsafe-sql-functions-in-laravel',
+            '.io/blog/starting-a-newsletter',
+            '.io/blog/short-closures-in-php',
+            '.io/blog/solid-interfaces-and-final-rant-with-brent',
+            '.io/blog/php-in-2019',
+            '.io/blog/starting-a-podcast',
+            '.io/blog/a-project-at-spatie',
+            '.io/blog/what-are-objects-anyway-rant-with-brent',
+            '.io/blog/tests-and-types',
+            '.io/blog/typed-properties-in-php-74',
+            '.io/blog/preloading-in-php-74',
+            '.io/blog/things-dependency-injection-is-not-about',
+            '.io/blog/a-letter-to-the-php-team',
+            '.io/blog/a-letter-to-the-php-team-reply-to-joe',
+            '.io/blog/guest-posts',
+            '.io/blog/can-i-translate-your-blog',
+            '.io/blog/laravel-has-many-through',
+            '.io/blog/laravel-custom-relation-classes',
+            '.io/blog/new-in-php-74',
+            '.io/blog/php-74-upgrade-mac',
+            '.io/blog/php-preload-benchmarks',
+            '.io/blog/php-in-2020',
+            '.io/blog/enums-without-enums',
+            '.io/blog/bitwise-booleans-in-php',
+            '.io/blog/event-driven-php',
+            '.io/blog/minor-versions-breaking-changes',
+            '.io/blog/combining-event-sourcing-and-stateful-systems',
+            '.io/blog/array-chunk-in-php',
+            '.io/blog/php-8-in-8-code-blocks',
+            '.io/blog/builders-and-architects-two-types-of-programmers',
+            '.io/blog/the-ikea-effect',
+            '.io/blog/php-74-in-7-code-blocks',
+            '.io/blog/improvements-on-laravel-nova',
+            '.io/blog/type-system-in-php-survey',
+            '.io/blog/merging-multidimensional-arrays-in-php',
+            '.io/blog/what-is-array-plus-in-php',
+            '.io/blog/type-system-in-php-survey-results',
+            '.io/blog/constructor-promotion-in-php-8',
+            '.io/blog/abstract-resources-in-laravel-nova',
+            '.io/blog/braille-and-the-history-of-software',
+            '.io/blog/jit-in-real-life-web-applications',
+            '.io/blog/php-8-match-or-switch',
+            '.io/blog/why-we-need-named-params-in-php',
+            '.io/blog/shorthand-comparisons-in-php',
+            '.io/blog/php-8-before-and-after',
+            '.io/blog/php-8-named-arguments',
+            '.io/blog/my-journey-into-event-sourcing',
+            '.io/blog/differences',
+            '.io/blog/annotations',
+            '.io/blog/dont-get-stuck',
+            '.io/blog/attributes-in-php-8',
+            '.io/blog/the-case-for-transpiled-generics',
+            '.io/blog/phpstorm-scopes',
+            '.io/blog/why-light-themes-are-better-according-to-science',
+            '.io/blog/what-a-good-pr-looks-like',
+            '.io/blog/front-line-php',
+            '.io/blog/php-8-jit-setup',
+            '.io/blog/php-8-nullsafe-operator',
+            '.io/blog/new-in-php-8',
+            '.io/blog/php-8-upgrade-mac',
+            '.io/blog/when-i-lost-a-few-hundred-leads',
+            '.io/blog/websites-like-star-wars',
+            '.io/blog/php-reimagined',
+            '.io/blog/a-storm-in-a-glass-of-water',
+            '.io/blog/php-enums-before-php-81',
+            '.io/blog/php-enums',
+            '.io/blog/dont-write-your-own-framework',
+            '.io/blog/honesty',
+            '.io/blog/thoughts-on-event-sourcing',
+            '.io/blog/what-event-sourcing-is-not-about',
+            '.io/blog/fibers-with-a-grain-of-salt',
+            '.io/blog/php-in-2021',
+            '.io/blog/parallel-php',
+            '.io/blog/why-we-need-multi-line-short-closures-in-php',
+            '.io/blog/a-new-major-version-of-laravel-event-sourcing',
+            '.io/blog/what-about-config-builders',
+            '.io/blog/opinion-driven-design',
+            '.io/blog/php-version-stats-july-2021',
+            '.io/blog/what-about-request-classes',
+            '.io/blog/cloning-readonly-properties-in-php-81',
+            '.io/blog/an-event-driven-mindset',
+            '.io/blog/php-81-before-and-after',
+            '.io/blog/optimistic-or-realistic-estimates',
+            '.io/blog/we-dont-need-runtime-type-checks',
+            '.io/blog/the-road-to-php',
+            '.io/blog/why-do-i-write',
+            '.io/blog/rational-thinking',
+            '.io/blog/named-arguments-and-variadic-functions',
+            '.io/blog/re-on-using-psr-abstractions',
+            '.io/blog/my-ikea-clock',
+            '.io/blog/php-81-readonly-properties',
+            '.io/blog/birth-and-death-of-a-framework',
+            '.io/blog/php-81-new-in-initializers',
+            '.io/blog/route-attributes',
+            '.io/blog/generics-in-php-video',
+            '.io/blog/php-81-in-8-code-blocks',
+            '.io/blog/new-in-php-81',
+            '.io/blog/php-81-performance-in-real-life',
+            '.io/blog/php-81-upgrade-mac',
+            '.io/blog/how-to-be-right-on-the-internet',
+            '.io/blog/php-version-stats-january-2022',
+            '.io/blog/php-in-2022',
+            '.io/blog/how-i-plan',
+            '.io/blog/twitter-home-made-me-miserable',
+            '.io/blog/its-your-fault',
+            '.io/blog/dealing-with-dependencies',
+            '.io/blog/php-in-2021-video',
+            '.io/blog/generics-in-php-1',
+            '.io/blog/generics-in-php-2',
+            '.io/blog/generics-in-php-3',
+            '.io/blog/generics-in-php-4',
+            '.io/blog/goodbye',
+            '.io/blog/strategies',
+            '.io/blog/dealing-with-deprecations',
+            '.io/blog/attribute-usage-in-top-php-packages',
+            '.io/blog/php-enum-style-guide',
+            '.io/blog/clean-and-minimalistic-phpstorm',
+            '.io/blog/stitcher-turns-5',
+            '.io/blog/php-version-stats-july-2022',
+            '.io/blog/evolution-of-a-php-object',
+            '.io/blog/uncertainty-doubt-and-static-analysis',
+            '.io/blog/road-to-php-82',
+            '.io/blog/php-performance-across-versions',
+            '.io/blog/light-colour-schemes-are-better',
+            '.io/blog/deprecated-dynamic-properties-in-php-82',
+            '.io/blog/php-reimagined-part-2',
+            '.io/blog/thoughts-on-asymmetric-visibility',
+            '.io/blog/uses',
+            '.io/blog/php-82-in-8-code-blocks',
+            '.io/blog/readonly-classes-in-php-82',
+            '.io/blog/deprecating-spatie-dto',
+            '.io/blog/php-82-upgrade-mac',
+            '.io/blog/php-annotated',
+            '.io/blog/you-cannot-find-me-on-mastodon',
+            '.io/blog/new-in-php-82',
+            '.io/blog/all-i-want-for-christmas',
+            '.io/blog/upgrading-to-php-82',
+            '.io/blog/php-version-stats-january-2023',
+            '.io/blog/php-in-2023',
+            '.io/blog/tabs-are-better',
+            '.io/blog/sponsors',
+            '.io/blog/why-curly-brackets-go-on-new-lines',
+            '.io/blog/my-10-favourite-php-functions',
+            '.io/blog/acronyms',
+            '.io/blog/code-folding',
+            '.io/blog/light-colour-schemes',
+            '.io/blog/slashdash',
+            '.io/blog/thank-you-kinsta',
+            '.io/blog/cloning-readonly-properties-in-php-83',
+            '.io/blog/limited-by-committee',
+            '.io/blog/things-considered-harmful',
+            '.io/blog/procedurally-generated-game-in-php',
+            '.io/blog/dont-be-clever',
+            '.io/blog/override-in-php-83',
+            '.io/blog/php-version-stats-july-2023',
+            '.io/blog/is-a-or-acts-as',
+            '.io/blog/rfc-vote',
+            '.io/blog/new-in-php-83',
+            '.io/blog/i-dont-know',
+            '.io/blog/passion-projects',
+            '.io/blog/php-version-stats-january-2024',
+            '.io/blog/the-framework-that-gets-out-of-your-way',
+            '.io/blog/a-syntax-highlighter-that-doesnt-suck',
+            '.io/blog/building-a-custom-language-in-tempest-highlight',
+            '.io/blog/testing-patterns',
+            '.io/blog/php-in-2024',
+            '.io/blog/tagged-singletons',
+            '.io/blog/twitter-exit',
+            '.io/blog/a-vocal-minority',
+            '.io/blog/php-version-stats-july-2024',
+            '.io/blog/you-should',
+            '.io/blog/new-with-parentheses-php-84',
+            '.io/blog/html-5-in-php-84',
+            '.io/blog/array-find-in-php-84',
+            '.io/blog/its-all-just-text',
+            '.io/blog/improved-lazy-loading',
+            '.io/blog/i-dont-code-the-way-i-used-to',
+            '.io/blog/php-84-at-least',
+            '.io/blog/extends-vs-implements',
+            '.io/blog/a-simple-approach-to-static-generation',
+            '.io/blog/building-a-framework',
+            '.io/blog/tagging-tempest-livestream',
+            '.io/blog/things-i-learned-writing-a-fiction-novel',
+            '.io/blog/unfair-advantage',
+            '.io/blog/new-in-php-84',
+            '.io/blog/php-version-stats-january-2025',
+            '.io/blog/theoretical-engineers',
+            '.io/blog/static-websites-with-tempest',
+            '.io/blog/request-objects-in-tempest',
+            '.io/blog/php-verse-2025',
+            '.io/blog/tempest-discovery-explained',
+            '.io/blog/php-version-stats-june-2025',
+            '.io/blog/pipe-operator-in-php-85',
+            '.io/blog/a-year-of-property-hooks',
+            '.io/blog/readonly-or-private-set',
+            '.io/blog/things-i-wish-i-knew',
+            '.io/blog/impact-charts',
+            '.io/blog/whats-your-motivator',
+            '.io/blog/vendor-locked',
+            '.io/blog/reducing-code-motion',
+            '.io/blog/sponsoring-open-source',
+            '.io/blog/my-wishlist-for-php-in-2026',
+            '.io/blog/game-changing-editions',
+            '.io/blog/new-in-php-85',
+            '.io/blog/flooded-rss',
+            '.io/blog/php-2026',
+            '.io/blog/open-source-strategies',
+            '.io/blog/not-optional',
+            '.io/blog/processing-11-million-rows',
+            '.io/blog/ai-induced-skepticism',
+            '.io/blog/php-86-partial-function-application',
+            '.io/blog/11-million-rows-in-seconds',
         ];
 
-        $paths = [];
         $pathCount = 0;
         $exclude = array (
-            'what-are-objects-anyway-rant-with-brent' => true,
-            'solid-interfaces-and-final-rant-with-brent' => true,
-            'abstract-resources-in-laravel-nova' => true,
-            'improvements-on-laravel-nova' => true,
-            'thoughts-on-event-sourcing' => true,
-            'my-journey-into-event-sourcing' => true,
-            'what-event-sourcing-is-not-about' => true,
-            'things-dependency-injection-is-not-about' => true,
-            'why-we-need-multi-line-short-closures-in-php' => true,
-            'short-closures-in-php' => true,
-            'a-new-major-version-of-laravel-event-sourcing' => true,
-            'php-81-before-and-after' => true,
-            'php-8-before-and-after' => true,
-            'php-81-in-8-code-blocks' => true,
-            'php-8-in-8-code-blocks' => true,
-            'php-82-in-8-code-blocks' => true,
+            '.io/blog/what-are-objects-anyway-rant-with-brent' => true,
+            '.io/blog/solid-interfaces-and-final-rant-with-brent' => true,
+            '.io/blog/abstract-resources-in-laravel-nova' => true,
+            '.io/blog/improvements-on-laravel-nova' => true,
+            '.io/blog/thoughts-on-event-sourcing' => true,
+            '.io/blog/my-journey-into-event-sourcing' => true,
+            '.io/blog/what-event-sourcing-is-not-about' => true,
+            '.io/blog/things-dependency-injection-is-not-about' => true,
+            '.io/blog/why-we-need-multi-line-short-closures-in-php' => true,
+            '.io/blog/short-closures-in-php' => true,
+            '.io/blog/a-new-major-version-of-laravel-event-sourcing' => true,
+            '.io/blog/php-81-before-and-after' => true,
+            '.io/blog/php-8-before-and-after' => true,
+            '.io/blog/php-81-in-8-code-blocks' => true,
+            '.io/blog/php-8-in-8-code-blocks' => true,
+            '.io/blog/php-82-in-8-code-blocks' => true,
         );
         foreach($pages as $page) {
             if(isset($exclude[$page])) 
-                $paths[\substr("https://stitcher.io/blog/".$page, -22, 7)] = ((\strlen($page)+52) << 9) | $pathCount++;
+                $paths[\substr($page, -22, 7)] = ((\strlen($page)+43) << 9) | $pathCount++;
             else
-                $paths[\substr("https://stitcher.io/blog/".$page, -13)] = ((\strlen($page)+52) << 9) | $pathCount++;
+                $paths[\substr($page, -13)] = ((\strlen($page)+43) << 9) | $pathCount++;
         }
 
         $dates = [];
@@ -609,7 +510,8 @@ final class Parser
                 }
             }
         }
-        for($m=1; $m!=3; $m++) {
+
+        for($m=1; $m!=4; $m++) {
             $max = $m2d[$m];
             for($d=1; $d!=$max; $d++) {
                 $date = '6-'.$numbers[$m].'-'.$numbers[$d];
@@ -645,7 +547,119 @@ final class Parser
         }
 
         // Start threads
-        Parser::partParallel($inputPath, $dates, $paths, $fullCount, $ranges, $streams);
+        $next = [];
+        for($i=0; $i!=120;$i++) {
+            $next[\chr($i)] = \chr($i+1);
+        }
+
+        $pid = \pcntl_fork(); // 0.2
+        if ($pid == 0) {
+            \fclose($streams[4][1]);
+            \fclose($streams[5][1]);
+            \fclose($streams[6][1]);
+            \fclose($streams[7][1]);  
+            \fclose($streams[8][1]);              
+            $pid = \pcntl_fork(); // 0.4
+            if ($pid == 0) {
+                \fclose($streams[2][1]);
+                \fclose($streams[3][1]);
+                $pid = \pcntl_fork(); // 0.6
+                if ($pid == 0) {
+                    \fclose($streams[1][1]);
+                    $output = Parser::partParse($inputPath, $ranges[0][0], $ranges[0][1]-$ranges[0][0], $dates, $paths, $fullCount, $next);
+                    \fwrite($streams[0][1], $output);
+                    \fflush($streams[0][1]);
+                    \fclose($streams[0][1]);
+                    exit();
+                }
+                \fclose($streams[0][1]);
+                $output = Parser::partParse($inputPath, $ranges[1][0], $ranges[1][1]-$ranges[1][0], $dates, $paths, $fullCount, $next);
+                \fwrite($streams[1][1], $output);
+                \fflush($streams[1][1]);
+                \fclose($streams[1][1]);
+                exit();
+            }
+            \fclose($streams[0][1]);
+            \fclose($streams[1][1]);
+            $pid = \pcntl_fork(); // 0.6
+            if ($pid == 0) {
+                \fclose($streams[3][1]);
+                $output = Parser::partParse($inputPath, $ranges[2][0], $ranges[2][1]-$ranges[2][0], $dates, $paths, $fullCount, $next);
+                \fwrite($streams[2][1], $output);
+                \fflush($streams[2][1]);
+                \fclose($streams[2][1]);
+                exit();
+            }
+            \fclose($streams[2][1]);
+            $output = Parser::partParse($inputPath, $ranges[3][0], $ranges[3][1]-$ranges[3][0], $dates, $paths, $fullCount, $next);
+            \fwrite($streams[3][1], $output);
+            \fflush($streams[3][1]);
+            \fclose($streams[3][1]);
+            exit();
+        }
+
+        \fclose($streams[0][1]);
+        \fclose($streams[1][1]);
+        \fclose($streams[2][1]);
+        \fclose($streams[3][1]);
+        $pid = \pcntl_fork(); // 0.4
+        if ($pid == 0) {
+            \fclose($streams[6][1]);
+            \fclose($streams[7][1]);
+            \fclose($streams[8][1]);
+            $pid = \pcntl_fork(); // 0.6
+            if ($pid == 0) {
+                \fclose($streams[5][1]);
+                $output = Parser::partParse($inputPath, $ranges[4][0], $ranges[4][1]-$ranges[4][0], $dates, $paths, $fullCount, $next);
+                \fwrite($streams[4][1], $output);
+                \fflush($streams[4][1]);
+                \fclose($streams[4][1]);
+                exit();
+            }
+            \fclose($streams[4][1]);
+            $output = Parser::partParse($inputPath, $ranges[5][0], $ranges[5][1]-$ranges[5][0], $dates, $paths, $fullCount, $next);
+            \fwrite($streams[5][1], $output);
+            \fflush($streams[5][1]);
+            \fclose($streams[5][1]);
+            exit();
+        }
+
+        \fclose($streams[4][1]);
+        \fclose($streams[5][1]);
+        $pid = \pcntl_fork(); // 0.6
+        if ($pid == 0) {
+            \fclose($streams[8][1]);   
+            
+            $pid = \pcntl_fork(); // 0.8
+            if ($pid == 0) {
+                \fclose($streams[7][1]);
+                $output = Parser::partParse($inputPath, $ranges[6][0], $ranges[6][1]-$ranges[6][0], $dates, $paths, $fullCount, $next);
+                \fwrite($streams[6][1], $output);
+                \fflush($streams[6][1]);
+                \fclose($streams[6][1]);
+                exit();
+            }
+            \fclose($streams[6][1]);
+            $output = Parser::partParse($inputPath, $ranges[7][0], $ranges[7][1]-$ranges[7][0], $dates, $paths, $fullCount, $next);
+            \fwrite($streams[7][1], $output);
+            \fflush($streams[7][1]);
+            \fclose($streams[7][1]);
+            exit();
+        }
+
+        \fclose($streams[6][1]);
+        \fclose($streams[7][1]); 
+        
+        $pid = \pcntl_fork(); // 0.8
+        if ($pid == 0) {
+            $output = Parser::partParse($inputPath, $ranges[8][0], $ranges[8][1]-$ranges[8][0], $dates, $paths, $fullCount, $next);
+            \fwrite($streams[8][1], $output);
+            \fflush($streams[8][1]);
+            \fclose($streams[8][1]);
+            exit();
+        }
+
+        \fclose($streams[8][1]);
 
         // Precompute while waiting
         $datesJson = [];
@@ -655,58 +669,54 @@ final class Parser
 
         $pathsJson = [];
         foreach($pages as $page) {
-            $key = $paths[substr("https://stitcher.io/blog/".$page, -13)] ?? $paths[substr("https://stitcher.io/blog/".$page, -22, 7)];
-            $pathsJson[$key & 511] = "\n    },\n    \"\\/blog\\/".$page.'": {';
+            $key = $paths[substr($page, -13)] ?? $paths[substr($page, -22, 7)];
+            $pathsJson[$key & 511] = "\n    },\n    \"\\/blog\\/".substr($page,9).'": {';
         }
 
         $output = \str_repeat("\0", $fullCount*2);
 
         // Read threads
-        $read = []; $write = []; $except = []; $outputs = ["","","","","","","","","","","",""]; $output0 = "";
+        $read = []; $write = []; $except = [];
         while(\count($threads) != 0) {
             $read = $threads;
             \stream_select($read, $write, $except, 5);
             foreach($read as $i => $thread) {
+                $buffer = \fread($thread, Parser::$READ_CHUNK);
+                while(!\feof($thread)) {
+                    $buffer .= \fread($thread, Parser::$READ_CHUNK);
+                }
+                
                 if($i == 0) {
-                    $outputs[$i] .= \fread($thread, Parser::$READ_CHUNK);
+                    \sodium_add($output, \chunk_split(\substr($buffer, 0, $fullCount), 1, "\0"));
+                    $sortedPaths = \unpack("v*", \substr($buffer, $fullCount));
+                    $pathsJson[$sortedPaths[1]] = \substr($pathsJson[$sortedPaths[1]], 7);
                 }
                 else {
-                    $outputs[$i] .=  \fread($thread, Parser::$READ_CHUNK);
+                    \sodium_add($output, \chunk_split($buffer, 1, "\0"));
                 }
-
-                if(\feof($thread)) {
-                    if($i == 0) {
-                        \sodium_add($output, \chunk_split(\substr($outputs[0], 0, $fullCount), 1, "\0"));
-                        $sortedPaths = \unpack("v*", \substr($outputs[0], $fullCount));
-                        $pathsJson[$sortedPaths[1]] = \substr($pathsJson[$sortedPaths[1]], 7);
-                    }
-                    else {
-                        \sodium_add($output, \chunk_split($outputs[$i], 1, "\0"));
-                    }
-                    unset($threads[$i]);
-                }
+                unset($threads[$i]);
             }
         }
-        
+
         $output = unpack("v*", $output);
 
         // Merge
         $buffer = '{';
         $max = $pathCount+1;
         for($i=1; $i!=$max; $i++) {
-            $pathI = $sortedPaths[$i];
-            $buffer .= $pathsJson[$pathI];  
+            $pathI = $sortedPaths[$i]+1;
+            $buffer .= $pathsJson[$pathI-1];  
             for($j=$pathI; $j<$fullCount; $j+=$pathCount) {
-                if($output[$j+1] != 0) {
-                    $buffer .= \substr($datesJson[$j-$pathI].$output[$j+1], 1);
+                if($output[$j] != 0) {
+                    $buffer .= \substr($datesJson[$j-$pathI].$output[$j], 1);
                     $j+=$pathCount;
                     break;
                 }
             }
 
             for(; $j<$fullCount; $j+=$pathCount) {
-                if($output[$j+1] != 0) {
-                    $buffer .= $datesJson[$j-$pathI].$output[$j+1];
+                if($output[$j] != 0) {
+                    $buffer .= $datesJson[$j-$pathI].$output[$j];
                 }
             }
         }
