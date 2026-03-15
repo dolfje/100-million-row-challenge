@@ -6,7 +6,7 @@ final class Parser
     static $READ_CHUNK = 165_000;
     static $CORES = 8;
 
-    static public function partParse(string $inputPath, int $start, int $length, $dates, $paths, $fullCount, $next) {
+    static public function partParse(string $inputPath, int $start, int $length, $dates, $paths, $fullCount, $n) {
         $read = 0;
 
         $output = \str_repeat(\chr(0), $fullCount);
@@ -38,112 +38,112 @@ final class Parser
                 $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
                 $pathId = $paths[\substr($buffer, $nextPos + 30, 6)] ?? $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                 $index = $dates[\substr($buffer, $pos - 22, 7)]+$pathId;
-                $output[$index] = $next[$output[$index]];
+                $output[$index] = $n[$output[$index]];
 
                 $order[$pathId] = true;
 
                 $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
                 $pathId = $paths[\substr($buffer, $pos + 30, 6)] ?? $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                 $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$pathId;
-                $output[$index] = $next[$output[$index]];
+                $output[$index] = $n[$output[$index]];
 
                 $order[$pathId] = true;
 
                 $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
                 $pathId = $paths[\substr($buffer, $nextPos + 30, 6)] ?? $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                 $index = $dates[\substr($buffer, $pos - 22, 7)]+$pathId;
-                $output[$index] = $next[$output[$index]];
+                $output[$index] = $n[$output[$index]];
 
                 $order[$pathId] = true;
 
                 $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
                 $pathId = $paths[\substr($buffer, $pos + 30, 6)] ?? $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                 $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$pathId;
-                $output[$index] = $next[$output[$index]];
+                $output[$index] = $n[$output[$index]];
 
                 $order[$pathId] = true;
 
                 $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
                 $pathId = $paths[\substr($buffer, $nextPos + 30, 6)] ?? $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                 $index = $dates[\substr($buffer, $pos - 22, 7)]+$pathId;
-                $output[$index] = $next[$output[$index]];
+                $output[$index] = $n[$output[$index]];
 
                 $order[$pathId] = true;
 
                 $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
                 $pathId = $paths[\substr($buffer, $pos + 30, 6)] ?? $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                 $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$pathId;
-                $output[$index] = $next[$output[$index]];
+                $output[$index] = $n[$output[$index]];
 
                 $order[$pathId] = true;
 
                 $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
                 $pathId = $paths[\substr($buffer, $nextPos + 30, 6)] ?? $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                 $index = $dates[\substr($buffer, $pos - 22, 7)]+$pathId;
-                $output[$index] = $next[$output[$index]];
+                $output[$index] = $n[$output[$index]];
 
                 $order[$pathId] = true;
 
                 $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
                 $pathId = $paths[\substr($buffer, $pos + 30, 6)] ?? $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                 $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$pathId;
-                $output[$index] = $next[$output[$index]];
+                $output[$index] = $n[$output[$index]];
 
                 $order[$pathId] = true;
 
                 $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
                 $pathId = $paths[\substr($buffer, $nextPos + 30, 6)] ?? $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                 $index = $dates[\substr($buffer, $pos - 22, 7)]+$pathId;
-                $output[$index] = $next[$output[$index]];
+                $output[$index] = $n[$output[$index]];
 
                 $order[$pathId] = true;
 
                 $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
                 $pathId = $paths[\substr($buffer, $pos + 30, 6)] ?? $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                 $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$pathId;
-                $output[$index] = $next[$output[$index]];
+                $output[$index] = $n[$output[$index]];
 
                 $order[$pathId] = true;
 
                 $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
                 $pathId = $paths[\substr($buffer, $nextPos + 30, 6)] ?? $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                 $index = $dates[\substr($buffer, $pos - 22, 7)]+$pathId;
-                $output[$index] = $next[$output[$index]];
+                $output[$index] = $n[$output[$index]];
 
                 $order[$pathId] = true;
 
                 $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
                 $pathId = $paths[\substr($buffer, $pos + 30, 6)] ?? $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                 $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$pathId;
-                $output[$index] = $next[$output[$index]];
+                $output[$index] = $n[$output[$index]];
 
                 $order[$pathId] = true;
 
                 $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
                 $pathId = $paths[\substr($buffer, $nextPos + 30, 6)] ?? $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                 $index = $dates[\substr($buffer, $pos - 22, 7)]+$pathId;
-                $output[$index] = $next[$output[$index]];
+                $output[$index] = $n[$output[$index]];
 
                 $order[$pathId] = true;
 
                 $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
                 $pathId = $paths[\substr($buffer, $pos + 30, 6)] ?? $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                 $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$pathId;
-                $output[$index] = $next[$output[$index]];
+                $output[$index] = $n[$output[$index]];
 
                 $order[$pathId] = true;
 
                 $pos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
                 $pathId = $paths[\substr($buffer, $nextPos + 30, 6)] ?? $paths[\substr($buffer, $nextPos + 30, $pos - $nextPos - 56)];
                 $index = $dates[\substr($buffer, $pos - 22, 7)]+$pathId;
-                $output[$index] = $next[$output[$index]];
+                $output[$index] = $n[$output[$index]];
 
                 $order[$pathId] = true;
 
                 $nextPos = \strpos($buffer, \PHP_EOL, $pos + 56);
                 $pathId = $paths[\substr($buffer, $pos + 30, 6)] ?? $paths[\substr($buffer, $pos + 30, $nextPos - $pos - 56)];
                 $index = $dates[\substr($buffer, $nextPos - 22, 7)]+$pathId;
-                $output[$index] = $next[$output[$index]];
+                $output[$index] = $n[$output[$index]];
 
                 $order[$pathId] = true;
             }*/
@@ -153,7 +153,7 @@ final class Parser
                 $nextPos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
                 $pathId = $paths[\substr($buffer, $nextPos - 48, 22)];
                 $index = $dates[\substr($buffer, $nextPos - 22, 7)]+($pathId & 511);
-                $output[$index] = $next[$output[$index]];
+                $output[$index] = $n[$output[$index]];
                 
                 $order[$pathId & 511] = true;
             }
@@ -177,52 +177,52 @@ final class Parser
             $read += $lenAsked;
 
             while($pos > 600) {
-                $pathId = $paths[\substr($buffer, $pos - 26, 22)];
-                $index = $dates[\substr($buffer, $pos, 7)]+($pathId & 511);
-                $output[$index] = $next[$output[$index]];
-                $pos -= ($pathId >> 9) + 27;
+                $p = $paths[\substr($buffer, $pos - 26, 22)];
+                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $output[$i] = $n[$output[$i]];
+                $pos -= ($p >> 9) + 27;
 
-                $pathId = $paths[\substr($buffer, $pos - 26, 22)];
-                $index = $dates[\substr($buffer, $pos, 7)]+($pathId & 511);
-                $output[$index] = $next[$output[$index]];
-                $pos -= ($pathId >> 9) + 27;
+                $p = $paths[\substr($buffer, $pos - 26, 22)];
+                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $output[$i] = $n[$output[$i]];
+                $pos -= ($p >> 9) + 27;
 
-                $pathId = $paths[\substr($buffer, $pos - 26, 22)];
-                $index = $dates[\substr($buffer, $pos, 7)]+($pathId & 511);
-                $output[$index] = $next[$output[$index]];
-                $pos -= ($pathId >> 9) + 27;
+                $p = $paths[\substr($buffer, $pos - 26, 22)];
+                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $output[$i] = $n[$output[$i]];
+                $pos -= ($p >> 9) + 27;
 
-                $pathId = $paths[\substr($buffer, $pos - 26, 22)];
-                $index = $dates[\substr($buffer, $pos, 7)]+($pathId & 511);
-                $output[$index] = $next[$output[$index]];
-                $pos -= ($pathId >> 9) + 27;
+                $p = $paths[\substr($buffer, $pos - 26, 22)];
+                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $output[$i] = $n[$output[$i]];
+                $pos -= ($p >> 9) + 27;
 
-                $pathId = $paths[\substr($buffer, $pos - 26, 22)];
-                $index = $dates[\substr($buffer, $pos, 7)]+($pathId & 511);
-                $output[$index] = $next[$output[$index]];
-                $pos -= ($pathId >> 9) + 27;
+                $p = $paths[\substr($buffer, $pos - 26, 22)];
+                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $output[$i] = $n[$output[$i]];
+                $pos -= ($p >> 9) + 27;
 
-                $pathId = $paths[\substr($buffer, $pos - 26, 22)];
-                $index = $dates[\substr($buffer, $pos, 7)]+($pathId & 511);
-                $output[$index] = $next[$output[$index]];
-                $pos -= ($pathId >> 9) + 27;
+                $p = $paths[\substr($buffer, $pos - 26, 22)];
+                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $output[$i] = $n[$output[$i]];
+                $pos -= ($p >> 9) + 27;
 
-                $pathId = $paths[\substr($buffer, $pos - 26, 22)];
-                $index = $dates[\substr($buffer, $pos, 7)]+($pathId & 511);
-                $output[$index] = $next[$output[$index]];
-                $pos -= ($pathId >> 9) + 27;
+                $p = $paths[\substr($buffer, $pos - 26, 22)];
+                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $output[$i] = $n[$output[$i]];
+                $pos -= ($p >> 9) + 27;
 
-                $pathId = $paths[\substr($buffer, $pos - 26, 22)];
-                $index = $dates[\substr($buffer, $pos, 7)]+($pathId & 511);
-                $output[$index] = $next[$output[$index]];
-                $pos -= ($pathId >> 9) + 27;
+                $p = $paths[\substr($buffer, $pos - 26, 22)];
+                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $output[$i] = $n[$output[$i]];
+                $pos -= ($p >> 9) + 27;
             }
 
             while($pos > 10) {
-                $pathId = $paths[\substr($buffer, $pos - 26, 22)];
-                $index = $dates[\substr($buffer, $pos, 7)]+($pathId & 511);
-                $output[$index] = $next[$output[$index]];
-                $pos -= ($pathId >> 9) + 27;
+                $p = $paths[\substr($buffer, $pos - 26, 22)];
+                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $output[$i] = $n[$output[$i]];
+                $pos -= ($p >> 9) + 27;
             }
         }
 
