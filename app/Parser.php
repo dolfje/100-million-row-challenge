@@ -37,56 +37,56 @@ final class Parser
                 $p = $paths[\substr($buffer, $pos - 26, 22)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
-                $pos -= ($p >> 9) + 27;
+                $pos -= $p >> 9;
 
                 $order[$p & 511] = $orderI++;
 
                 $p = $paths[\substr($buffer, $pos - 26, 22)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
-                $pos -= ($p >> 9) + 27;
+                $pos -= $p >> 9;
 
                 $order[$p & 511] = $orderI++;
 
                 $p = $paths[\substr($buffer, $pos - 26, 22)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
-                $pos -= ($p >> 9) + 27;
+                $pos -= $p >> 9;
 
                 $order[$p & 511] = $orderI++;
 
                 $p = $paths[\substr($buffer, $pos - 26, 22)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
-                $pos -= ($p >> 9) + 27;
+                $pos -= $p >> 9;
 
                 $order[$p & 511] = $orderI++;
 
                 $p = $paths[\substr($buffer, $pos - 26, 22)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
-                $pos -= ($p >> 9) + 27;
+                $pos -= $p >> 9;
 
                 $order[$p & 511] = $orderI++;
 
                 $p = $paths[\substr($buffer, $pos - 26, 22)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
-                $pos -= ($p >> 9) + 27;
+                $pos -= $p >> 9;
 
                 $order[$p & 511] = $orderI++;
 
                 $p = $paths[\substr($buffer, $pos - 26, 22)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
-                $pos -= ($p >> 9) + 27;
+                $pos -= $p >> 9;
 
                 $order[$p & 511] = $orderI++;
 
                 $p = $paths[\substr($buffer, $pos - 26, 22)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
-                $pos -= ($p >> 9) + 27;
+                $pos -= $p >> 9;
 
                 $order[$p & 511] = $orderI++;
             }
@@ -95,14 +95,14 @@ final class Parser
                 $p = $paths[\substr($buffer, $pos - 26, 22)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
-                $pos -= ($p >> 9) + 27;
+                $pos -= $p >> 9;
 
                 $order[$p & 511] = $orderI++;
             }
 
             $order = \array_flip($order);
             \krsort($order);
-            $orderOutput = \pack("v*", ...\array_values($order));
+            $orderOutput = \pack("v*", ...$order);
         }
 
         // Fast reading
@@ -123,49 +123,49 @@ final class Parser
                 $p = $paths[\substr($buffer, $pos - 26, 22)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
-                $pos -= ($p >> 9) + 27;
+                $pos -= $p >> 9;
 
                 $p = $paths[\substr($buffer, $pos - 26, 22)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
-                $pos -= ($p >> 9) + 27;
+                $pos -= $p >> 9;
 
                 $p = $paths[\substr($buffer, $pos - 26, 22)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
-                $pos -= ($p >> 9) + 27;
+                $pos -= $p >> 9;
 
                 $p = $paths[\substr($buffer, $pos - 26, 22)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
-                $pos -= ($p >> 9) + 27;
+                $pos -= $p >> 9;
 
                 $p = $paths[\substr($buffer, $pos - 26, 22)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
-                $pos -= ($p >> 9) + 27;
+                $pos -= $p >> 9;
 
                 $p = $paths[\substr($buffer, $pos - 26, 22)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
-                $pos -= ($p >> 9) + 27;
+                $pos -= $p >> 9;
 
                 $p = $paths[\substr($buffer, $pos - 26, 22)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
-                $pos -= ($p >> 9) + 27;
+                $pos -= $p >> 9;
 
                 $p = $paths[\substr($buffer, $pos - 26, 22)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
-                $pos -= ($p >> 9) + 27;
+                $pos -= $p >> 9;
             }
 
             while($pos > 10) {
                 $p = $paths[\substr($buffer, $pos - 26, 22)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
-                $pos -= ($p >> 9) + 27;
+                $pos -= $p >> 9;
             }
         }
 
@@ -538,7 +538,7 @@ final class Parser
         $paths = [];
         $pathCount = 0;
         foreach($pages as $page) {
-            $paths[\substr("https://stitcher.io/blog/".$page, -22)] = ((\strlen($page)+25) << 9) | $pathCount++;
+            $paths[\substr("https://stitcher.io/blog/".$page, -22)] = ((\strlen($page)+52) << 9) | $pathCount++;
         }
 
         $dates = [];
