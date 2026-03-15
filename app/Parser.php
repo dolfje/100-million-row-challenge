@@ -34,56 +34,56 @@ final class Parser
             $read += $lenAsked;
 
             while($pos > 600) {
-                $p = $paths[\substr($buffer, $pos - 26, 22)];
+                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
                 $order[$p & 511] = $orderI++;
 
-                $p = $paths[\substr($buffer, $pos - 26, 22)];
+                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
                 $order[$p & 511] = $orderI++;
 
-                $p = $paths[\substr($buffer, $pos - 26, 22)];
+                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
                 $order[$p & 511] = $orderI++;
 
-                $p = $paths[\substr($buffer, $pos - 26, 22)];
+                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
                 $order[$p & 511] = $orderI++;
 
-                $p = $paths[\substr($buffer, $pos - 26, 22)];
+                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
                 $order[$p & 511] = $orderI++;
 
-                $p = $paths[\substr($buffer, $pos - 26, 22)];
+                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
                 $order[$p & 511] = $orderI++;
 
-                $p = $paths[\substr($buffer, $pos - 26, 22)];
+                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
                 $order[$p & 511] = $orderI++;
 
-                $p = $paths[\substr($buffer, $pos - 26, 22)];
+                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
@@ -92,7 +92,7 @@ final class Parser
             }
 
             while($pos > 10) {
-                $p = $paths[\substr($buffer, $pos - 26, 22)];
+                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
@@ -537,8 +537,29 @@ final class Parser
 
         $paths = [];
         $pathCount = 0;
+        $exclude = array (
+            'what-are-objects-anyway-rant-with-brent' => true,
+            'solid-interfaces-and-final-rant-with-brent' => true,
+            'abstract-resources-in-laravel-nova' => true,
+            'improvements-on-laravel-nova' => true,
+            'thoughts-on-event-sourcing' => true,
+            'my-journey-into-event-sourcing' => true,
+            'what-event-sourcing-is-not-about' => true,
+            'things-dependency-injection-is-not-about' => true,
+            'why-we-need-multi-line-short-closures-in-php' => true,
+            'short-closures-in-php' => true,
+            'a-new-major-version-of-laravel-event-sourcing' => true,
+            'php-81-before-and-after' => true,
+            'php-8-before-and-after' => true,
+            'php-81-in-8-code-blocks' => true,
+            'php-8-in-8-code-blocks' => true,
+            'php-82-in-8-code-blocks' => true,
+        );
         foreach($pages as $page) {
-            $paths[\substr("https://stitcher.io/blog/".$page, -22)] = ((\strlen($page)+52) << 9) | $pathCount++;
+            if(isset($exclude[$page])) 
+                $paths[\substr("https://stitcher.io/blog/".$page, -22, 7)] = ((\strlen($page)+52) << 9) | $pathCount++;
+            else
+                $paths[\substr("https://stitcher.io/blog/".$page, -13)] = ((\strlen($page)+52) << 9) | $pathCount++;
         }
 
         $dates = [];
@@ -598,7 +619,7 @@ final class Parser
 
         $pathsJson = [];
         foreach($pages as $page) {
-            $key = $paths[substr("https://stitcher.io/blog/".$page, -22)];
+            $key = $paths[substr("https://stitcher.io/blog/".$page, -13)] ?? $paths[substr("https://stitcher.io/blog/".$page, -22, 7)];
             $pathsJson[$key & 511] = "\n    },\n    \"\\/blog\\/".$page.'": {';
         }
 
