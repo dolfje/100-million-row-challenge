@@ -6,12 +6,12 @@ final class Parser
     static $READ_CHUNK = 165_000;
     static $CORES = 9;
 
-    static public function partParse(string $inputPath, int $start, int $length, $dates, $paths, $fullCount, $n) {
+    static public function partParse($input, $start, $length, $dates, $paths, $fullCount, $n) {
         $read = 0;
 
         $output = \str_repeat(\chr(0), $fullCount);
 
-        $file = \fopen($inputPath, 'r');
+        $file = \fopen($input, 'r');
         \stream_set_read_buffer($file, 0);
         \fseek($file, $start);
 
@@ -22,83 +22,83 @@ final class Parser
             $orderI = 0;
 
             $lenAsked = Parser::$FIRST_READ_CHUNK;
-            $buffer = \fread($file, $lenAsked);
+            $b = \fread($file, $lenAsked);
 
-            if(\substr($buffer, -1) != \PHP_EOL) {
+            if(\substr($b, -1) != \PHP_EOL) {
                 $extra = \fgets($file);
                 $lenAsked += \strlen($extra);
-                $buffer .= $extra;
+                $b .= $extra;
             }
 
             $pos = $lenAsked - 23;
             $read += $lenAsked;
 
             while($pos > 800) {
-                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
-                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $p = $paths[\substr($b, $pos - 17, 13)] ?? $paths[\substr($b, $pos - 26, 7)];
+                $i = $dates[\substr($b, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
                 $order[$p & 511] = $orderI++;
 
-                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
-                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $p = $paths[\substr($b, $pos - 17, 13)] ?? $paths[\substr($b, $pos - 26, 7)];
+                $i = $dates[\substr($b, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
                 $order[$p & 511] = $orderI++;
 
-                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
-                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $p = $paths[\substr($b, $pos - 17, 13)] ?? $paths[\substr($b, $pos - 26, 7)];
+                $i = $dates[\substr($b, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
                 $order[$p & 511] = $orderI++;
 
-                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
-                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $p = $paths[\substr($b, $pos - 17, 13)] ?? $paths[\substr($b, $pos - 26, 7)];
+                $i = $dates[\substr($b, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
                 $order[$p & 511] = $orderI++;
 
-                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
-                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $p = $paths[\substr($b, $pos - 17, 13)] ?? $paths[\substr($b, $pos - 26, 7)];
+                $i = $dates[\substr($b, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
                 $order[$p & 511] = $orderI++;
 
-                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
-                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $p = $paths[\substr($b, $pos - 17, 13)] ?? $paths[\substr($b, $pos - 26, 7)];
+                $i = $dates[\substr($b, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
                 $order[$p & 511] = $orderI++;
 
-                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
-                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $p = $paths[\substr($b, $pos - 17, 13)] ?? $paths[\substr($b, $pos - 26, 7)];
+                $i = $dates[\substr($b, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
                 $order[$p & 511] = $orderI++;
 
-                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
-                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $p = $paths[\substr($b, $pos - 17, 13)] ?? $paths[\substr($b, $pos - 26, 7)];
+                $i = $dates[\substr($b, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
                 $order[$p & 511] = $orderI++;
 
-                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
-                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $p = $paths[\substr($b, $pos - 17, 13)] ?? $paths[\substr($b, $pos - 26, 7)];
+                $i = $dates[\substr($b, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
                 $order[$p & 511] = $orderI++;
 
-                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
-                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $p = $paths[\substr($b, $pos - 17, 13)] ?? $paths[\substr($b, $pos - 26, 7)];
+                $i = $dates[\substr($b, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
@@ -106,8 +106,8 @@ final class Parser
             }
 
             while($pos > 10) {
-                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
-                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $p = $paths[\substr($b, $pos - 17, 13)] ?? $paths[\substr($b, $pos - 26, 7)];
+                $i = $dates[\substr($b, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
@@ -122,72 +122,72 @@ final class Parser
         // Fast reading
         while (!\feof($file) && $read < $length) {
             $lenAsked = $read + Parser::$READ_CHUNK >= $length ? $length - $read : Parser::$READ_CHUNK;
-            $buffer = \fread($file, $lenAsked);
+            $b = \fread($file, $lenAsked);
 
-            if(\substr($buffer, -1) != \PHP_EOL) {
+            if(\substr($b, -1) != \PHP_EOL) {
                 $extra = \fgets($file);
                 $lenAsked += \strlen($extra);
-                $buffer .= $extra;
+                $b .= $extra;
             }
 
             $pos = $lenAsked - 23;
             $read += $lenAsked;
 
             while($pos > 800) {
-                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
-                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $p = $paths[\substr($b, $pos - 17, 13)] ?? $paths[\substr($b, $pos - 26, 7)];
+                $i = $dates[\substr($b, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
-                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
-                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $p = $paths[\substr($b, $pos - 17, 13)] ?? $paths[\substr($b, $pos - 26, 7)];
+                $i = $dates[\substr($b, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;                
 
-                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
-                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $p = $paths[\substr($b, $pos - 17, 13)] ?? $paths[\substr($b, $pos - 26, 7)];
+                $i = $dates[\substr($b, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
-                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
-                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $p = $paths[\substr($b, $pos - 17, 13)] ?? $paths[\substr($b, $pos - 26, 7)];
+                $i = $dates[\substr($b, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
-                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
-                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $p = $paths[\substr($b, $pos - 17, 13)] ?? $paths[\substr($b, $pos - 26, 7)];
+                $i = $dates[\substr($b, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
-                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
-                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $p = $paths[\substr($b, $pos - 17, 13)] ?? $paths[\substr($b, $pos - 26, 7)];
+                $i = $dates[\substr($b, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
-                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
-                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $p = $paths[\substr($b, $pos - 17, 13)] ?? $paths[\substr($b, $pos - 26, 7)];
+                $i = $dates[\substr($b, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
-                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
-                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $p = $paths[\substr($b, $pos - 17, 13)] ?? $paths[\substr($b, $pos - 26, 7)];
+                $i = $dates[\substr($b, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
-                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
-                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $p = $paths[\substr($b, $pos - 17, 13)] ?? $paths[\substr($b, $pos - 26, 7)];
+                $i = $dates[\substr($b, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
-                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
-                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $p = $paths[\substr($b, $pos - 17, 13)] ?? $paths[\substr($b, $pos - 26, 7)];
+                $i = $dates[\substr($b, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
             }
 
             while($pos > 10) {
-                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
-                $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
+                $p = $paths[\substr($b, $pos - 17, 13)] ?? $paths[\substr($b, $pos - 26, 7)];
+                $i = $dates[\substr($b, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
             }
@@ -195,7 +195,7 @@ final class Parser
         return $output.$orderOutput;
     }
 
-    static public function parse(string $inputPath, string $outputPath): void
+    static public function parse(string $input, string $outputPath): void
     {
         \gc_disable();
 
@@ -524,7 +524,7 @@ final class Parser
         // Determine ranges
         $ranges = [];
         $start = 0;
-        $file = \fopen($inputPath, 'r');
+        $file = \fopen($input, 'r');
         \stream_set_read_buffer($file, 0);
         \fseek($file, 0, SEEK_END);
         $filesize = \ftell($file);
@@ -566,14 +566,14 @@ final class Parser
                 $pid = \pcntl_fork(); // 0.6
                 if ($pid == 0) {
                     \fclose($streams[1][1]);
-                    $output = Parser::partParse($inputPath, $ranges[0][0], $ranges[0][1]-$ranges[0][0], $dates, $paths, $fullCount, $next);
+                    $output = Parser::partParse($input, $ranges[0][0], $ranges[0][1]-$ranges[0][0], $dates, $paths, $fullCount, $next);
                     \fwrite($streams[0][1], $output);
                     \fflush($streams[0][1]);
                     \fclose($streams[0][1]);
                     exit();
                 }
                 \fclose($streams[0][1]);
-                $output = Parser::partParse($inputPath, $ranges[1][0], $ranges[1][1]-$ranges[1][0], $dates, $paths, $fullCount, $next);
+                $output = Parser::partParse($input, $ranges[1][0], $ranges[1][1]-$ranges[1][0], $dates, $paths, $fullCount, $next);
                 \fwrite($streams[1][1], $output);
                 \fflush($streams[1][1]);
                 \fclose($streams[1][1]);
@@ -584,14 +584,14 @@ final class Parser
             $pid = \pcntl_fork(); // 0.6
             if ($pid == 0) {
                 \fclose($streams[3][1]);
-                $output = Parser::partParse($inputPath, $ranges[2][0], $ranges[2][1]-$ranges[2][0], $dates, $paths, $fullCount, $next);
+                $output = Parser::partParse($input, $ranges[2][0], $ranges[2][1]-$ranges[2][0], $dates, $paths, $fullCount, $next);
                 \fwrite($streams[2][1], $output);
                 \fflush($streams[2][1]);
                 \fclose($streams[2][1]);
                 exit();
             }
             \fclose($streams[2][1]);
-            $output = Parser::partParse($inputPath, $ranges[3][0], $ranges[3][1]-$ranges[3][0], $dates, $paths, $fullCount, $next);
+            $output = Parser::partParse($input, $ranges[3][0], $ranges[3][1]-$ranges[3][0], $dates, $paths, $fullCount, $next);
             \fwrite($streams[3][1], $output);
             \fflush($streams[3][1]);
             \fclose($streams[3][1]);
@@ -610,14 +610,14 @@ final class Parser
             $pid = \pcntl_fork(); // 0.6
             if ($pid == 0) {
                 \fclose($streams[5][1]);
-                $output = Parser::partParse($inputPath, $ranges[4][0], $ranges[4][1]-$ranges[4][0], $dates, $paths, $fullCount, $next);
+                $output = Parser::partParse($input, $ranges[4][0], $ranges[4][1]-$ranges[4][0], $dates, $paths, $fullCount, $next);
                 \fwrite($streams[4][1], $output);
                 \fflush($streams[4][1]);
                 \fclose($streams[4][1]);
                 exit();
             }
             \fclose($streams[4][1]);
-            $output = Parser::partParse($inputPath, $ranges[5][0], $ranges[5][1]-$ranges[5][0], $dates, $paths, $fullCount, $next);
+            $output = Parser::partParse($input, $ranges[5][0], $ranges[5][1]-$ranges[5][0], $dates, $paths, $fullCount, $next);
             \fwrite($streams[5][1], $output);
             \fflush($streams[5][1]);
             \fclose($streams[5][1]);
@@ -633,14 +633,14 @@ final class Parser
             $pid = \pcntl_fork(); // 0.8
             if ($pid == 0) {
                 \fclose($streams[7][1]);
-                $output = Parser::partParse($inputPath, $ranges[6][0], $ranges[6][1]-$ranges[6][0], $dates, $paths, $fullCount, $next);
+                $output = Parser::partParse($input, $ranges[6][0], $ranges[6][1]-$ranges[6][0], $dates, $paths, $fullCount, $next);
                 \fwrite($streams[6][1], $output);
                 \fflush($streams[6][1]);
                 \fclose($streams[6][1]);
                 exit();
             }
             \fclose($streams[6][1]);
-            $output = Parser::partParse($inputPath, $ranges[7][0], $ranges[7][1]-$ranges[7][0], $dates, $paths, $fullCount, $next);
+            $output = Parser::partParse($input, $ranges[7][0], $ranges[7][1]-$ranges[7][0], $dates, $paths, $fullCount, $next);
             \fwrite($streams[7][1], $output);
             \fflush($streams[7][1]);
             \fclose($streams[7][1]);
@@ -652,7 +652,7 @@ final class Parser
         
         $pid = \pcntl_fork(); // 0.8
         if ($pid == 0) {
-            $output = Parser::partParse($inputPath, $ranges[8][0], $ranges[8][1]-$ranges[8][0], $dates, $paths, $fullCount, $next);
+            $output = Parser::partParse($input, $ranges[8][0], $ranges[8][1]-$ranges[8][0], $dates, $paths, $fullCount, $next);
             \fwrite($streams[8][1], $output);
             \fflush($streams[8][1]);
             \fclose($streams[8][1]);
@@ -681,18 +681,18 @@ final class Parser
             $read = $threads;
             \stream_select($read, $write, $except, 5);
             foreach($read as $i => $thread) {
-                $buffer = \fread($thread, Parser::$READ_CHUNK);
+                $b = \fread($thread, Parser::$READ_CHUNK);
                 while(!\feof($thread)) {
-                    $buffer .= \fread($thread, Parser::$READ_CHUNK);
+                    $b .= \fread($thread, Parser::$READ_CHUNK);
                 }
                 
                 if($i == 0) {
-                    \sodium_add($output, \chunk_split(\substr($buffer, 0, $fullCount), 1, "\0"));
-                    $sortedPaths = \unpack("v*", \substr($buffer, $fullCount));
+                    \sodium_add($output, \chunk_split(\substr($b, 0, $fullCount), 1, "\0"));
+                    $sortedPaths = \unpack("v*", \substr($b, $fullCount));
                     $pathsJson[$sortedPaths[1]] = \substr($pathsJson[$sortedPaths[1]], 7);
                 }
                 else {
-                    \sodium_add($output, \chunk_split($buffer, 1, "\0"));
+                    \sodium_add($output, \chunk_split($b, 1, "\0"));
                 }
                 unset($threads[$i]);
             }
@@ -701,14 +701,14 @@ final class Parser
         $output = unpack("v*", $output);
 
         // Merge
-        $buffer = '{';
+        $b = '{';
         $max = $pathCount+1;
         for($i=1; $i!=$max; $i++) {
             $pathI = $sortedPaths[$i]+1;
-            $buffer .= $pathsJson[$pathI-1];  
+            $b .= $pathsJson[$pathI-1];  
             for($j=$pathI; $j<$fullCount; $j+=$pathCount) {
                 if($output[$j] != 0) {
-                    $buffer .= \substr($datesJson[$j-$pathI].$output[$j], 1);
+                    $b .= \substr($datesJson[$j-$pathI].$output[$j], 1);
                     $j+=$pathCount;
                     break;
                 }
@@ -716,11 +716,11 @@ final class Parser
 
             for(; $j<$fullCount; $j+=$pathCount) {
                 if($output[$j] != 0) {
-                    $buffer .= $datesJson[$j-$pathI].$output[$j];
+                    $b .= $datesJson[$j-$pathI].$output[$j];
                 }
             }
         }
-        $buffer .= "\n    }\n}";
-        \file_put_contents($outputPath, $buffer);
+        $b .= "\n    }\n}";
+        \file_put_contents($outputPath, $b);
     }
 }
