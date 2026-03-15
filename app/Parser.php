@@ -120,49 +120,49 @@ final class Parser
             $read += $lenAsked;
 
             while($pos > 600) {
-                $p = $paths[\substr($buffer, $pos - 26, 22)];
+                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
-                $p = $paths[\substr($buffer, $pos - 26, 22)];
+                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
-                $p = $paths[\substr($buffer, $pos - 26, 22)];
+                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
-                $p = $paths[\substr($buffer, $pos - 26, 22)];
+                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
-                $p = $paths[\substr($buffer, $pos - 26, 22)];
+                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
-                $p = $paths[\substr($buffer, $pos - 26, 22)];
+                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
-                $p = $paths[\substr($buffer, $pos - 26, 22)];
+                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
 
-                $p = $paths[\substr($buffer, $pos - 26, 22)];
+                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
             }
 
             while($pos > 10) {
-                $p = $paths[\substr($buffer, $pos - 26, 22)];
+                $p = $paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 7)];
                 $i = $dates[\substr($buffer, $pos, 7)]+($p & 511);
                 $output[$i] = $n[$output[$i]];
                 $pos -= $p >> 9;
