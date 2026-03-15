@@ -659,41 +659,36 @@ final class Parser
             $pathsJson[$key & 511] = "\n    },\n    \"\\/blog\\/".$page.'": {';
         }
 
-        $output = \array_fill(0, $fullCount, 0);
+        $output = \str_repeat("\0", $fullCount*2);
 
         // Read threads
-        $read = []; $write = []; $except = []; $outputs = [0,0,0,0,0,0,0,0,0]; $output0 = "";
+        $read = []; $write = []; $except = []; $outputs = ["","","","","","","","","","","",""]; $output0 = "";
         while(\count($threads) != 0) {
             $read = $threads;
             \stream_select($read, $write, $except, 5);
             foreach($read as $i => $thread) {
                 if($i == 0) {
-                    $output0 .= \fread($thread, Parser::$READ_CHUNK);
+                    $outputs[$i] .= \fread($thread, Parser::$READ_CHUNK);
                 }
                 else {
-                    $j = $outputs[$i];
-                    foreach(\unpack('C*', \fread($thread, Parser::$READ_CHUNK)) as $data) {
-                        $output[$j++] += $data;
-                    }
-                    $outputs[$i] = $j;
+                    $outputs[$i] .=  \fread($thread, Parser::$READ_CHUNK);
                 }
 
                 if(\feof($thread)) {
                     if($i == 0) {
-                        $data = \unpack('C*', \substr($output0, 0, $fullCount));
-                        for($j=0; $j!=$fullCount; $j++) {
-                            $output[$j] += $data[$j+1];
-                        }
-                        $sortedPaths = \unpack("v*", \substr($output0, $fullCount));
+                        \sodium_add($output, \chunk_split(\substr($outputs[0], 0, $fullCount), 1, "\0"));
+                        $sortedPaths = \unpack("v*", \substr($outputs[0], $fullCount));
                         $pathsJson[$sortedPaths[1]] = \substr($pathsJson[$sortedPaths[1]], 7);
-                        unset($output0);
+                    }
+                    else {
+                        \sodium_add($output, \chunk_split($outputs[$i], 1, "\0"));
                     }
                     unset($threads[$i]);
                 }
-
-
             }
         }
+        
+        $output = unpack("v*", $output);
 
         // Merge
         $buffer = '{';
@@ -702,16 +697,16 @@ final class Parser
             $pathI = $sortedPaths[$i];
             $buffer .= $pathsJson[$pathI];  
             for($j=$pathI; $j<$fullCount; $j+=$pathCount) {
-                if($output[$j] != 0) {
-                    $buffer .= \substr($datesJson[$j-$pathI].$output[$j], 1);
+                if($output[$j+1] != 0) {
+                    $buffer .= \substr($datesJson[$j-$pathI].$output[$j+1], 1);
                     $j+=$pathCount;
                     break;
                 }
             }
 
             for(; $j<$fullCount; $j+=$pathCount) {
-                if($output[$j] != 0) {
-                    $buffer .= $datesJson[$j-$pathI].$output[$j];
+                if($output[$j+1] != 0) {
+                    $buffer .= $datesJson[$j-$pathI].$output[$j+1];
                 }
             }
         }
