@@ -151,7 +151,7 @@ final class Parser
             while($nextPos < $lenAsked) {
                 $pos = $nextPos;
                 $nextPos = \strpos($buffer, \PHP_EOL, $nextPos + 56);
-                $pathId = $paths[\substr($buffer, $nextPos - 39, 13)] ?? $paths[\substr($buffer, $nextPos - 48, 22)];
+                $pathId = $paths[\substr($buffer, $nextPos - 41, 15)] ?? $paths[\substr($buffer, $nextPos - 48, 22)];
                 $index = $dates[\substr($buffer, $nextPos - 22, 7)]+($pathId & 511);
                 $output[$index] = $next[$output[$index]];
                 
@@ -177,49 +177,49 @@ final class Parser
             $read += $lenAsked;
 
             while($pos > 600) {
-                $pathId = ($paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 22)]);
+                $pathId = ($paths[\substr($buffer, $pos - 19, 15)] ?? $paths[\substr($buffer, $pos - 26, 22)]);
                 $index = $dates[\substr($buffer, $pos, 7)]+($pathId & 511);
                 $output[$index] = $next[$output[$index]];
                 $pos -= ($pathId >> 9) + 27;
 
-                $pathId = ($paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 22)]);
+                $pathId = ($paths[\substr($buffer, $pos - 19, 15)] ?? $paths[\substr($buffer, $pos - 26, 22)]);
                 $index = $dates[\substr($buffer, $pos, 7)]+($pathId & 511);
                 $output[$index] = $next[$output[$index]];
                 $pos -= ($pathId >> 9) + 27;
 
-                $pathId = ($paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 22)]);
+                $pathId = ($paths[\substr($buffer, $pos - 19, 15)] ?? $paths[\substr($buffer, $pos - 26, 22)]);
                 $index = $dates[\substr($buffer, $pos, 7)]+($pathId & 511);
                 $output[$index] = $next[$output[$index]];
                 $pos -= ($pathId >> 9) + 27;
 
-                $pathId = ($paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 22)]);
+                $pathId = ($paths[\substr($buffer, $pos - 19, 15)] ?? $paths[\substr($buffer, $pos - 26, 22)]);
                 $index = $dates[\substr($buffer, $pos, 7)]+($pathId & 511);
                 $output[$index] = $next[$output[$index]];
                 $pos -= ($pathId >> 9) + 27;
 
-                $pathId = ($paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 22)]);
+                $pathId = ($paths[\substr($buffer, $pos - 19, 15)] ?? $paths[\substr($buffer, $pos - 26, 22)]);
                 $index = $dates[\substr($buffer, $pos, 7)]+($pathId & 511);
                 $output[$index] = $next[$output[$index]];
                 $pos -= ($pathId >> 9) + 27;
 
-                $pathId = ($paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 22)]);
+                $pathId = ($paths[\substr($buffer, $pos - 19, 15)] ?? $paths[\substr($buffer, $pos - 26, 22)]);
                 $index = $dates[\substr($buffer, $pos, 7)]+($pathId & 511);
                 $output[$index] = $next[$output[$index]];
                 $pos -= ($pathId >> 9) + 27;
 
-                $pathId = ($paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 22)]);
+                $pathId = ($paths[\substr($buffer, $pos - 19, 15)] ?? $paths[\substr($buffer, $pos - 26, 22)]);
                 $index = $dates[\substr($buffer, $pos, 7)]+($pathId & 511);
                 $output[$index] = $next[$output[$index]];
                 $pos -= ($pathId >> 9) + 27;
 
-                $pathId = ($paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 22)]);
+                $pathId = ($paths[\substr($buffer, $pos - 19, 15)] ?? $paths[\substr($buffer, $pos - 26, 22)]);
                 $index = $dates[\substr($buffer, $pos, 7)]+($pathId & 511);
                 $output[$index] = $next[$output[$index]];
                 $pos -= ($pathId >> 9) + 27;
             }
 
             while($pos > 10) {
-                $pathId = ($paths[\substr($buffer, $pos - 17, 13)] ?? $paths[\substr($buffer, $pos - 26, 22)]);
+                $pathId = ($paths[\substr($buffer, $pos - 19, 15)] ?? $paths[\substr($buffer, $pos - 26, 22)]);
                 $index = $dates[\substr($buffer, $pos, 7)]+($pathId & 511);
                 $output[$index] = $next[$output[$index]];
                 $pos -= ($pathId >> 9) + 27;
@@ -597,12 +597,8 @@ final class Parser
         $long = array (
             'what-are-objects-anyway-rant-with-brent' => true,
             'solid-interfaces-and-final-rant-with-brent' => true,
-            'abstract-resources-in-laravel-nova' => true,
-            'improvements-on-laravel-nova' => true,
             'thoughts-on-event-sourcing' => true,
             'my-journey-into-event-sourcing' => true,
-            'what-event-sourcing-is-not-about' => true,
-            'things-dependency-injection-is-not-about' => true,
             'why-we-need-multi-line-short-closures-in-php' => true,
             'short-closures-in-php' => true,
             'a-new-major-version-of-laravel-event-sourcing' => true,
@@ -617,7 +613,7 @@ final class Parser
                 $paths[\substr("https://stitcher.io/blog/".$page, -22)] = ((\strlen($page)+25) << 9) | $pathCount++;
             }
             else {
-                $paths[\substr("https://stitcher.io/blog/".$page, -13)] = ((\strlen($page)+25) << 9) | $pathCount++;
+                $paths[\substr("https://stitcher.io/blog/".$page, -15)] = ((\strlen($page)+25) << 9) | $pathCount++;
             }
         }
 
@@ -678,7 +674,7 @@ final class Parser
 
         $pathsJson = [];
         foreach($pages as $page) {
-            $key = $paths[substr("https://stitcher.io/blog/".$page, -13)] ?? $paths[substr("https://stitcher.io/blog/".$page, -22)];
+            $key = $paths[substr("https://stitcher.io/blog/".$page, -15)] ?? $paths[substr("https://stitcher.io/blog/".$page, -22)];
             $pathsJson[$key & 511] = "\n    },\n    \"\\/blog\\/".$page.'": {';
         }
 
