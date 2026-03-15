@@ -624,7 +624,8 @@ final class Parser
         $start = 0;
         $file = \fopen($inputPath, 'r');
         \stream_set_read_buffer($file, 0);
-        $filesize = \filesize($inputPath);
+        \fseek($file, 0, SEEK_END);
+        $filesize = \ftell($file);
         $length = \ceil($filesize/Parser::$CORES);
         for($i=0; $i!=Parser::$CORES; $i++) {
             \fseek($file, $length*$i+$length);
@@ -634,8 +635,7 @@ final class Parser
             $start = $end;
         }
         $ranges[$i-1][1] = $filesize;
-        \fclose($file);
-
+        
         $streams = [];
         for($i=0; $i!=Parser::$CORES; $i++) {
             $streams[$i]  = \stream_socket_pair(STREAM_PF_UNIX, STREAM_SOCK_STREAM, STREAM_IPPROTO_IP);
